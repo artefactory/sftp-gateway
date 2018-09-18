@@ -18,7 +18,8 @@ spec:
           secretName: sftp-credentials
       containers:
       - name: gcs-sftp-gateway
-        image: eu.gcr.io/datalakempx/gcs-sftp-gateway:v1
+        image: eu.gcr.io/datalakempx/gcs-sftp-gateway:v2
+        imagePullPolicy: Always
         command: ["/opt/run.sh"]
         volumeMounts:
         - name: sftp-credentials

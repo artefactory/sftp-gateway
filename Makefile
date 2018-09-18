@@ -4,15 +4,15 @@ endif
 
 DOCKER_IMAGE = gcs-sftp-gateway
 DOCKER_REGISTRY=eu.gcr.io
-DOCKER_TAG=v1
+DOCKER_TAG=v2
 
 KUBE_SECRET = sftp-credentials
 KUBE_CLUSTER_NAME = sftp-gateway
 KUBE_ZONE = europe-west3-a
 KUBE_SERVICE_ACCOUNT = sftp-gateway
 
-SERVICE_KEYFILE = credentials/key.json
-PRIVATE_KEYFILE = credentials/sftp.key
+SERVICE_KEYFILE = credentials/${PROJECT_ID}/key.json
+PRIVATE_KEYFILE = credentials/${PROJECT_ID}/sftp.key
 PUBLIC_KEYFILE = ${PRIVATE_KEYFILE}.pub
 
 IAM_ACCOUNT = ${KUBE_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com
@@ -74,7 +74,7 @@ kubernetes_upload_secret: kubernetes_setup_access kubernetes_create_gcp_service_
 	kubectl create secret generic ${KUBE_SECRET} --from-file=${SERVICE_KEYFILE} --from-file=${PUBLIC_KEYFILE}
 
 credentials_dir:
-	mkdir -p credentials
+	mkdir -p credentials/${PROJECT_ID}
 
 docker_publish: docker_build docker_configure_auth
 	docker tag ${DOCKER_IMAGE} ${DOCKER_REGISTRY}/${PROJECT_ID}/${DOCKER_IMAGE}:${DOCKER_TAG}

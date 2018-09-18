@@ -1,7 +1,11 @@
 import json
 import re
+import sys
+import os
 
 from parsers import parsers
+
+sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 
 
 def print_for_stackdriver(severity, message, timestamp=None, labels={}):
