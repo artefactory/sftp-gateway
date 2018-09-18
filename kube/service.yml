@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: gcs-sftp-gateway-service
+spec:
+  selector:
+    app: gcs-sftp-gateway
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 22
+    nodePort: 30000
