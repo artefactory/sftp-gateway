@@ -17,6 +17,12 @@ PUBLIC_KEYFILE = ${PRIVATE_KEYFILE}.pub
 
 IAM_ACCOUNT = ${KUBE_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com
 
+kubernetes_create_deployment: kubernetes_setup_access
+	kubectl create -f kube/pod.yml
+
+kubernetes_create_service: kubernetes_setup_access
+	kubectl create -f kube/service.yml
+
 kubernetes_setup_access:
 	gcloud --project ${PROJECT_ID} container clusters get-credentials ${KUBE_CLUSTER_NAME} --zone ${KUBE_ZONE}
 	account=$$(gcloud info --format='value(config.account)') ; \
