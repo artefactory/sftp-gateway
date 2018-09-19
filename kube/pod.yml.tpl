@@ -18,7 +18,7 @@ spec:
           secretName: sftp-credentials
       containers:
       - name: gcs-sftp-gateway
-        image: eu.gcr.io/***REMOVED***-datalake-prod/gcs-sftp-gateway:v2
+        image: {{DOCKER_URL}}
         imagePullPolicy: Always
         command: ["/opt/run.sh"]
         volumeMounts:
@@ -26,9 +26,9 @@ spec:
           mountPath: /var/secrets/credentials
         env:
         - name: GCSSFTP_USER
-          value: ***REMOVED***
+          value: {{GCSSFTP_USER}}
         - name: GCSSFTP_BUCKET
-          value: ***REMOVED***-datalake-ingest-prod
+          value: {{GCSSFTP_BUCKET}}
         ports:
         - containerPort: 22
         securityContext:

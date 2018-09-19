@@ -29,3 +29,5 @@ RUN pip install -r /opt/build/requirements.txt
 ENV PYTHONPATH /opt/build/
 
 EXPOSE 22
+
+CMD /opt/run.sh

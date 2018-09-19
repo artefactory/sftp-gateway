@@ -2,9 +2,18 @@ ifndef PROJECT_ID
   $(error PROJECT_ID is undefined)
 endif
 
+ifndef GCSSFTP_USER
+  $(error GCSSFTP_USER is undefined)
+endif
+
+ifndef GCSSFTP_BUCKET
+  $(error GCSSFTP_BUCKET is undefined)
+endif
+
 DOCKER_IMAGE = gcs-sftp-gateway
 DOCKER_REGISTRY=eu.gcr.io
 DOCKER_TAG=v2
+DOCKER_URL= ${DOCKER_REGISTRY}/${PROJECT_ID}/${DOCKER_IMAGE}:${DOCKER_TAG}
 
 KUBE_SECRET = sftp-credentials
 KUBE_CLUSTER_NAME = sftp-gateway
@@ -17,7 +26,20 @@ PUBLIC_KEYFILE = ${PRIVATE_KEYFILE}.pub
 
 IAM_ACCOUNT = ${KUBE_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com
 
-kubernetes_create_deployment: kubernetes_setup_access
+PODTEMPLATE = kube/pod.yml.tpl
+PODFILE = kube/pod.yml
+
+credentials: credentials_dir kubernetes_ssh_key kubernetes_create_gcp_service_account_key
+
+kubernetes_run: docker_publish kubernetes_upload_secret kubernetes_create_service kubernetes_create_deployment
+
+kubernetes_make_deployment_file:
+	DOCKER_URL=${DOCKER_URL} \
+	GCSSFTP_USER=${GCSSFTP_USER} \
+	GCSSFTP_BUCKET=${GCSSFTP_BUCKET} \
+	python -c "import pystache; import os; print pystache.render(open('${PODTEMPLATE}', 'r').read(), dict(os.environ))" > ${PODFILE}
+
+kubernetes_create_deployment: kubernetes_setup_access kubernetes_make_deployment_file
 	kubectl create -f kube/pod.yml
 
 kubernetes_create_service: kubernetes_setup_access
@@ -58,7 +80,7 @@ kubernetes_create_gcp_service_account_key: credentials_dir kubernetes_create_gcp
 	echo "Old keys flushed"
 
 kubernetes_ssh_key: credentials_dir
-	if [ -f ${PRIVATE_KEYFILE} ]; \
+	if [ -f ${PUBLIC_KEYFILE} ]; \
 	then \
 		echo "Public key exists, skipping" ; \
 	else \
@@ -86,10 +108,9 @@ docker_configure_auth:
 docker_build:
 	docker build -t ${DOCKER_IMAGE} .
 
-docker_run_test: docker_build
+docker_run: docker_build
 	docker run -a STDIN -a STDERR -a STDOUT -it \
 	 					 --mount type=bind,source=$$(pwd)/credentials/,target=/var/secrets/credentials/ \
-						 --mount type=bind,source=$$(pwd)/image/opt/,target=/opt/ \
 						 --cap-add SYS_ADMIN --device /dev/fuse \
 						 --env GCSSFTP_USER=${GCSSFTP_USER} \
 						 --env GCSSFTP_BUCKET=${GCSSFTP_BUCKET} \
