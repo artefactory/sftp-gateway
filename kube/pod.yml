@@ -18,7 +18,7 @@ spec:
           secretName: sftp-credentials
       containers:
       - name: gcs-sftp-gateway
-        image: eu.gcr.io/monoprix-datalake-prod/gcs-sftp-gateway:v2
+        image: eu.gcr.io/datalakempx/gcs-sftp-gateway:v2
         imagePullPolicy: Always
         command: ["/opt/run.sh"]
         volumeMounts:
@@ -28,7 +28,7 @@ spec:
         - name: GCSSFTP_USER
           value: monoprix
         - name: GCSSFTP_BUCKET
-          value: monoprix-datalake-ingest-prod
+          value: monoprix-datalake-ingest-dev
         ports:
         - containerPort: 22
         securityContext:
@@ -36,3 +36,4 @@ spec:
           capabilities:
             add:
               - SYS_ADMIN
+
