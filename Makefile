@@ -29,6 +29,9 @@ IAM_ACCOUNT = ${KUBE_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com
 PODTEMPLATE = kube/pod.yml.tpl
 PODFILE = kube/pod.yml
 
+SERVICETEMPLATE = kube/service.yml.tpl
+SERVICEFILE = kube/service.yml
+
 credentials: credentials_dir kubernetes_ssh_key kubernetes_create_gcp_service_account_key
 
 kubernetes_run: docker_publish kubernetes_upload_secret kubernetes_create_service kubernetes_create_deployment
@@ -39,10 +42,14 @@ kubernetes_make_deployment_file:
 	GCSSFTP_BUCKET=${GCSSFTP_BUCKET} \
 	python -c "import pystache; import os; print pystache.render(open('${PODTEMPLATE}', 'r').read(), dict(os.environ))" > ${PODFILE}
 
+kubernetes_make_service_file:
+	GCSSFTP_IP=${GCSSFTP_IP} \
+	python -c "import pystache; import os; print pystache.render(open('${SERVICETEMPLATE}', 'r').read(), dict(os.environ))" > ${SERVICEFILE}
+
 kubernetes_create_deployment: kubernetes_setup_access kubernetes_make_deployment_file
 	kubectl create -f kube/pod.yml
 
-kubernetes_create_service: kubernetes_setup_access
+kubernetes_create_service: kubernetes_setup_access kubernetes_make_service_file
 	kubectl create -f kube/service.yml
 
 kubernetes_setup_access:

@@ -41,8 +41,14 @@ The different `Makefile` commands rely on Environment variables to run correctly
 | Variable | Description | Example |
 | --- | --- | ---: |
 | `PROJECT_ID `| The ID of the GCP Project | `***REMOVED***-datalake-dev` |
-| GCSSFTP_USER | The username that will be used to access the SFTP server | `***REMOVED***` |
-| GCSSFTP_BUCKET | The name of the GCS bucket that will be used (must be in the same GCP Project) | `***REMOVED***-datalake-ingest-dev` |
+| `GCSSFTP_USER` | The username that will be used to access the SFTP server | `***REMOVED***` |
+| `GCSSFTP_BUCKET` | The name of the GCS bucket that will be used (must be in the same GCP Project) | `***REMOVED***-datalake-ingest-dev` |
+
+To set Environment variables, use the `export` command:
+
+```
+export PROJECT_ID=***REMOVED***-datalake-dev
+```
 
 #### Credentials
 
@@ -69,6 +75,16 @@ This command will:
 - Generate a new Public/Private key pair in the folder
 - Create a GCP Service account
 - Create a new Service account JSON key in the folder
+
+#### Directories
+
+For various technical reasons relating to [SFTP Chrooting](https://wiki.archlinux.org/index.php/SFTP_chroot), the SFTP users will see two directories (`stage` and `dev`) when they connect to the server.
+
+Only the contents of the `stage` directory are mapped to GCS.
+
+```
+
+```
 
 ### Building the image
 To build the image, just run:
@@ -105,7 +121,7 @@ make docker_run
 ```
 ### Running the image on Kubernetes
 
-Assuming you have a Kubernetes cluster, you can run the image as a Pod, exposed via a Service. This repository contains the spec files required to generate a Service and a High-Availability Deployment of 2 containers.
+Assuming you have a Kubernetes cluster, you can run the image as a Pod, exposed via an internal LoadBalancer Service. This repository contains the spec files required to generate a Service and a High-Availability Deployment of 2 containers.
 
 More information on the Kubernetes config can be found in the spec files in the `./kube` directory.
 

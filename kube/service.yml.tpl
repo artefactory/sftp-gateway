@@ -7,11 +7,10 @@ metadata:
     cloud.google.com/load-balancer-type: "Internal"
 spec:
   type: LoadBalancer
-  loadBalancerIP: 10.222.0.18
+  loadBalancerIP: {{GCSSFTP_IP}}
   ports:
   - name: sftp
     port: 22
     protocol: TCP
   selector:
     app: gcs-sftp-gateway
-
