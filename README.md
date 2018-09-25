@@ -82,10 +82,6 @@ For various technical reasons relating to [SFTP Chrooting](https://wiki.archlinu
 
 Only the contents of the `stage` directory are mapped to GCS.
 
-```
-
-```
-
 ### Building the image
 To build the image, just run:
 
