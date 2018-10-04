@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gcs-sftp-gateway-secret
+type: Opaque
+data:
+  GCSSFTP_SSH_PUBKEY: {{GCSSFTP_SSH_PUBKEY}}
+  GCSSFTP_USER: {{GCSSFTP_USER}}
+  GCSSFTP_BUCKET: {{GCSSFTP_BUCKET}}
+  GCSSFTP_SERVICE_ACCOUNT_KEY: {{GCSSFTP_SERVICE_ACCOUNT_KEY}}
+  GCSSFTP_PROJECT_ID: {{GCSSFTP_PROJECT_ID}}

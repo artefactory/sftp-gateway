@@ -32,18 +32,18 @@ PrintMotd no
 PermitUserEnvironment no
 PermitRootLogin no
 PermitTunnel no
-Port 22
+Port {{ssh_port}}
 AuthorizedKeysFile {{authorized_keys_file}}
 ChrootDirectory {{landing_directory}}
 
 AuthenticationMethods publickey
 
-ForceCommand internal-sftp -l VERBOSE -f LOCAL6 -p open,close,read,write,lstat,fstat,opendir,readdir,mkdir,realpath,stat
+ForceCommand internal-sftp -l VERBOSE -f LOCAL6 -p open,close,read,write,lstat,fstat,opendir,readdir,realpath,stat,rename,posix-rename
 
 AcceptEnv LANG LC_*
 
 # override default of no subsystems
 #Subsystem	sftp	/usr/lib/openssh/sftp-server -l INFO -f LOCAL6
-Subsystem sftp internal-sftp -l VERBOSE -f LOCAL6 -p open,close,read,write,lstat,fstat,opendir,readdir,mkdir,realpath,stat
+Subsystem sftp internal-sftp -l VERBOSE -f LOCAL6 -p open,close,read,write,lstat,fstat,opendir,readdir,realpath,stat,rename,posix-rename
 
 AllowUsers {{user}}

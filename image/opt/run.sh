@@ -1,6 +1,6 @@
 #! /bin/bash
 
-python /opt/build/bin/setup.py
+python /opt/build/bin/setup.py 2>&1 
 
 if [ $? -ne 0 ]
 then
@@ -8,7 +8,7 @@ then
   exit 1
 fi
 
-service rsyslog start
+service rsyslog start 2>&1 | logger -t default -i -p local5.info
 
 if [ $? -ne 0 ]
 then
@@ -16,7 +16,7 @@ then
   exit 1
 fi
 
-service ssh start
+service ssh start 2>&1 | logger -t default -i -p local5.info
 
 if [ $? -ne 0 ]
 then
@@ -24,24 +24,18 @@ then
   exit 1
 fi
 
-nohup gcsfuse --key-file /var/secrets/credentials/key.json \
-              --foreground \
-              --debug_gcs \
-              -o allow_other \
-              --uid 9000 \
-              --gid 9000 \
-              $GCSSFTP_BUCKET \
-              /var/landing/stage 2> /dev/null \
-              | logger -t gcsfuse -i -p local5.info &
+service cron start 2>&1 | logger -t default -i -p local5.info
 
 if [ $? -ne 0 ]
 then
-  echo "Error starting gcsfuse"
+  echo "Error starting cron"
   exit 1
 fi
 
 sleep 3
 
-chown $GCSSFTP_USER /var/landing/stage
+env | grep GCSSFTP >> /etc/environment
+
+chown -R $GCSSFTP_USER /var/landing/stage
 
 python /opt/build/bin/format_logs.py

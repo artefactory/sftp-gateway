@@ -3,6 +3,9 @@ import lib.constants as const
 
 
 def create_user():
+
+    print "Creating user"
+
     command = ['useradd',
                '--no-create-home',
                '--no-user-group',

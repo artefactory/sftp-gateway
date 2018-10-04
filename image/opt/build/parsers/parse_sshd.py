@@ -31,7 +31,7 @@ extractors.append(Extractor(
 extractors.append(Extractor(
     'ssh_authentication_failed',
     r'^Invalid user (?P<user>[^\s]+) from (?P<ip_address>\d+\.\d+\.\d+\.\d+).*$',
-    'info',
+    'warn',
     'SSH Authentication failed for user {user} from {ip_address}',
     [],
     ['user', 'ip_address']
@@ -40,7 +40,7 @@ extractors.append(Extractor(
 extractors.append(Extractor(
     'ssh_authentication_failed',
     r'^Failed publickey for (?P<user>[^\s]+) from (?P<ip_address>\d+\.\d+\.\d+\.\d+).*$',
-    'info',
+    'warn',
     'SSH Authentication failed for user {user} from {ip_address}',
     [],
     ['user', 'ip_address']

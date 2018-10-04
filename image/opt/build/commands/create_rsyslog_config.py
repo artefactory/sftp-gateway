@@ -5,6 +5,9 @@ import lib.constants as const
 
 
 def create_rsyslog_config():
+
+    print "Configuring rsyslog"
+
     renderer = pystache.Renderer()
 
     context = {

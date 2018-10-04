@@ -24,7 +24,10 @@ def parse_process(process_str):
     pattern = r'^(.+)\[(\d+)\]:$'
     match = re.match(pattern, process_str)
 
-    return match.group(1), int(match.group(2))
+    if match:
+        return match.group(1), int(match.group(2))
+    else:
+        return "default", -1
 
 
 def parse_timestamp(timestamp_str):
