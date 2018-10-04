@@ -8,7 +8,6 @@ AUTHORIZED_KEYS_DIRECTORY = "/etc/ssh/authorized-keys/"
 
 SECRETS_PATH = "/var/secrets/credentials/"
 SECRET_GCPKEYFILE = os.path.join(SECRETS_PATH, "key.json")
-SECRET_PUBLICKEYFILE = os.path.join(SECRETS_PATH, "sftp.key.pub")
 
 TEMPLATE_DIRECTORY = os.path.join(os.path.dirname(__file__), '..', 'templates')
 LANDING_DIRECTORY = "/var/landing"

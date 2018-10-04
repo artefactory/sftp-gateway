@@ -20,7 +20,8 @@ extractors.append(Extractor(
     ['user', 'ip_address']
 ))
 
-commands = ['open', 'read', 'write', 'lstat', 'fstat', 'opendir', 'readdir', 'realpath', 'stat']
+commands = ['open', 'close', 'read', 'write', 'lstat', 'fstat', 'opendir', 'readdir', 'realpath', 'stat', 'rename', 'posix-rename']
+
 
 for command in commands:
     extractors.append(Extractor(

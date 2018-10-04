@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: gcs-sftp-gateway-service
   annotations:
-    # This creates an internal LoadBalancer, only accessible inside the VPC
     cloud.google.com/load-balancer-type: "Internal"
 spec:
   type: LoadBalancer
