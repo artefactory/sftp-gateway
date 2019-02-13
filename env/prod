@@ -1,0 +1,7 @@
+GCS_BUCKET=***REMOVED***-datalake-ingest-prod
+PROJECT_ID=***REMOVED***-datalake-prod
+SFTP_USER=***REMOVED***
+SFTP_IP=10.222.0.3
+INTERNAL=true
+KUBE_CLUSTER_NAME=sftp-gateway
+KUBE_ZONE=europe-west3-a

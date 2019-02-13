@@ -1,15 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: gcs-sftp-gateway-service
+  name: {{KUBE_SERVICE}}
+  {{#INTERNAL}}
   annotations:
     cloud.google.com/load-balancer-type: "Internal"
+  {{/INTERNAL}}
 spec:
   type: LoadBalancer
-  loadBalancerIP: {{GCSSFTP_IP}}
+  loadBalancerIP: {{SFTP_IP}}
   ports:
   - name: sftp
     port: 22
     protocol: TCP
   selector:
-    app: gcs-sftp-gateway
+    app: {{KUBE_APP_LABEL}}
