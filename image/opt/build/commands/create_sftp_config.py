@@ -14,7 +14,7 @@ def create_sftp_config():
         'authorized_keys_file': helpers.get_authorized_key_file(),
         'user': helpers.get_user(),
         'landing_directory': const.LANDING_DIRECTORY,
-        'ssh_port': helpers.get_ssh_port()
+        'ssh_port': const.SSH_PORT
     }
 
     config = renderer.render_path(helpers.get_template('sshd_config'), context)

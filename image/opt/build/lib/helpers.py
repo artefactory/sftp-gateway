@@ -1,45 +1,21 @@
 from __future__ import print_function
 import os
 import sys
-import base64
 from subprocess import check_call, CalledProcessError
 
 import lib.constants as const
-
-
-def get_landing_directories():
-    landing_directories = []
-    if 'GCSSFTP_LANDING_DIRECTORIES' in os.environ:
-        raw_landing_directories = os.environ['GCSSFTP_LANDING_DIRECTORIES']
-        landing_directories = [os.path.join(const.LANDING_DIRECTORY, l.lower()) for l in raw_landing_directories.split(',')]
-
-    return landing_directories
 
 
 def has_value(key):
     return key in os.environ
 
 
-def get_ssh_port():
-    if has_value('GCSSFTP_SSH_PORT'):
-        return os.environ['GCSSFTP_SSH_PORT'].strip()
-    return 22
-
-
 def get_user():
-    return os.environ['GCSSFTP_USER'].strip()
+    return os.environ['SFTP_USER'].strip()
 
 
 def get_bucket():
-    return os.environ['GCSSFTP_BUCKET'].strip()
-
-
-def get_authorized_key():
-    return base64.b64decode(os.environ['GCSSFTP_SSH_PUBKEY'])
-
-
-def gcp_create_service_account_key():
-    return base64.b64decode(os.environ['GCSSFTP_SERVICE_ACCOUNT_KEY'])
+    return os.environ['GCS_BUCKET'].strip()
 
 
 def get_authorized_key_file():
@@ -52,7 +28,7 @@ def get_template(template):
 
 
 def get_project_id():
-    return os.environ['GCSSFTP_PROJECT_ID']
+    return os.environ['PROJECT_ID']
 
 
 def generate_pass():

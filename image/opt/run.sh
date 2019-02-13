@@ -1,6 +1,6 @@
 #! /bin/bash
 
-python /opt/build/bin/setup.py 2>&1 
+python /opt/build/bin/setup.py 2>&1
 
 if [ $? -ne 0 ]
 then
@@ -34,8 +34,8 @@ fi
 
 sleep 3
 
-env | grep GCSSFTP >> /etc/environment
+env | grep GCS_BUCKET > /etc/environment
 
-chown -R $GCSSFTP_USER /var/landing/stage
+chown -R $SFTP_USER /var/landing/stage
 
 python /opt/build/bin/format_logs.py
