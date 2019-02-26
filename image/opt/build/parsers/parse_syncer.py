@@ -21,17 +21,19 @@ def parse_syncer(pid, raw_message):
         labels = {
             'file': filename,
             'destination': parsed_json['destination'],
-            'result': parsed_json['result'],
-            'process': 'syncer'
+            'process': 'syncer',
+            'result': parsed_json['result']
         }
 
         if parsed_json['result'] == 'OK':
             message = "{} sucessfully uploaded to {}".format(filename, parsed_json['destination'])
             severity = "info"
+            labels['event'] = 'upload_succeeded'
 
         elif parsed_json['result'] == "skip":
             message = "{} skipped, already present on destination".format(filename)
             severity = "warn"
+            labels['event'] = 'upload_skipped'
 
         messages.append((severity, message, labels))
 

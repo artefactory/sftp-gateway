@@ -8,7 +8,7 @@ include ${ENV_FILE}
 
 DOCKER_IMAGE = gcs-sftp-gateway
 DOCKER_REGISTRY = eu.gcr.io
-DOCKER_TAG = v8
+DOCKER_TAG = v9
 DOCKER_URL= ${DOCKER_REGISTRY}/${PROJECT_ID}/${DOCKER_IMAGE}:${DOCKER_TAG}
 
 KUBE_APP_LABEL = sftp-gateway-${ENV}
