@@ -8,19 +8,21 @@ include ${ENV_FILE}
 
 DOCKER_IMAGE = gcs-sftp-gateway
 DOCKER_REGISTRY = eu.gcr.io
-DOCKER_TAG = v9
+DOCKER_TAG = v14
 DOCKER_URL= ${DOCKER_REGISTRY}/${PROJECT_ID}/${DOCKER_IMAGE}:${DOCKER_TAG}
 
 KUBE_APP_LABEL = sftp-gateway-${ENV}
 KUBE_SERVICE = sftp-gateway-${ENV}-service
 
 KUBE_SERVICE_ACCOUNT = sftp-gateway-${ENV}
-KUBE_SECRET = sftp-gateway-${ENV}-credentials
+KUBE_CREDENTIALS_SECRET = sftp-gateway-${ENV}-credentials
+KUBE_HOSTKEYS_SECRET = sftp-gateway-${ENV}-hostkeys
 KUBE_GENERATED_CONFIG_DIR = kube_generated/${ENV}
 
 GCP_SERVICE_ACCOUNT_KEYFILE = credentials/${ENV}/key.json
 SSH_PRIVATE_KEYFILE = credentials/${ENV}/sftp.key
 SSH_PUBLIC_KEYFILE = ${SSH_PRIVATE_KEYFILE}.pub
+SSH_HOST_KEY_DIRECTORY = credentials/${ENV}/hostkeys
 
 GCP_IAM_ACCOUNT = ${KUBE_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com
 
@@ -49,7 +51,7 @@ docker_run: docker_build
 						 -p 3000:22 \
 						 ${DOCKER_IMAGE}
 
-credentials: create_ssh_key create_gcp_service_account_key
+credentials: create_ssh_key create_ssh_host_key create_gcp_service_account_key
 
 create_gcp_service_account:
 	service_account_exists=$$(gcloud --project ${PROJECT_ID} iam service-accounts list --format json | jq -Mr 'map(select(.displayName=="${KUBE_SERVICE_ACCOUNT}")) | length') ; \
@@ -82,18 +84,31 @@ create_ssh_key: credentials_dir
 		ssh-keygen -N "" -f ${SSH_PRIVATE_KEYFILE} ; \
 	fi
 
+create_ssh_host_key: credentials_dir
+	if [ -d ${SSH_HOST_KEY_DIRECTORY} ]; \
+	then \
+		echo "SSH Host key directory exists, skipping" ; \
+	else \
+		mkdir -p ${SSH_HOST_KEY_DIRECTORY} && \
+		ssh-keygen -N "" -t ecdsa -f ${SSH_HOST_KEY_DIRECTORY}/ssh_host_ecdsa_key && \
+		ssh-keygen -N "" -t dsa -f ${SSH_HOST_KEY_DIRECTORY}/ssh_host_dsa_key && \
+		ssh-keygen -N "" -t ed25519 -f ${SSH_HOST_KEY_DIRECTORY}/ssh_host_ed25519_key && \
+		ssh-keygen -N "" -t rsa -b 4096 -f ${SSH_HOST_KEY_DIRECTORY}/ssh_host_rsa_key ; \
+	fi
+
 credentials_dir:
 	mkdir -p credentials/${ENV}
 
 
-kubernetes_run: docker_publish create_kubernetes_secret create_kubernetes_service create_kubernetes_deployment
+kubernetes_run: docker_publish create_kubernetes_credentials_secret create_kubernetes_hostkeys_secret create_kubernetes_service create_kubernetes_deployment
 
 generate_kubernetes_deployment_file:
 	mkdir -p ${KUBE_GENERATED_CONFIG_DIR}
 	export $$(cat ${ENV_FILE} | xargs) && \
 	DOCKER_URL=${DOCKER_URL} \
 	KUBE_APP_LABEL=${KUBE_APP_LABEL} \
-	KUBE_SECRET=${KUBE_SECRET} \
+	KUBE_CREDENTIALS_SECRET=${KUBE_CREDENTIALS_SECRET} \
+	KUBE_HOSTKEYS_SECRET=${KUBE_HOSTKEYS_SECRET} \
 	python -c "import pystache; import os; print pystache.render(open('${KUBE_PODTEMPLATE}', 'r').read(), dict(os.environ))" > ${KUBE_PODFILE}
 
 generate_kubernetes_service_file:
@@ -109,12 +124,21 @@ create_kubernetes_deployment: setup_kubernetes_access generate_kubernetes_deploy
 create_kubernetes_service: setup_kubernetes_access generate_kubernetes_service_file
 	kubectl create -f ${KUBE_GENERATED_CONFIG_DIR}/service.yml
 
-create_kubernetes_secret: setup_kubernetes_access credentials
-	secret_exists=$$(kubectl get secrets -o=json | jq -Mr '.items | map(select(.metadata.name == "${KUBE_SECRET}")) | length') ; \
-	if [ $$secret_exists -ne 1 ] ; \
+create_kubernetes_credentials_secret: setup_kubernetes_access credentials
+	secret_exists=$$(kubectl get secrets -o=json | jq -Mr '.items | map(select(.metadata.name == "${KUBE_CREDENTIALS_SECRET}")) | length') ; \
+	if [ $$secret_exists -eq 1 ] ; \
 	then \
-		kubectl create secret generic ${KUBE_SECRET} --from-file=${GCP_SERVICE_ACCOUNT_KEYFILE} --from-file=${SSH_PUBLIC_KEYFILE} ; \
-	fi
+		kubectl delete secret ${KUBE_CREDENTIALS_SECRET} ; \
+	fi ; \
+	kubectl create secret generic ${KUBE_CREDENTIALS_SECRET} --from-file=${GCP_SERVICE_ACCOUNT_KEYFILE} --from-file=${SSH_PUBLIC_KEYFILE} ;
+
+create_kubernetes_hostkeys_secret: setup_kubernetes_access credentials
+	secret_exists=$$(kubectl get secrets -o=json | jq -Mr '.items | map(select(.metadata.name == "${KUBE_HOSTKEYS_SECRET}")) | length') ; \
+	if [ $$secret_exists -eq 1 ] ; \
+	then \
+		kubectl delete secret ${KUBE_HOSTKEYS_SECRET} ; \
+	fi ; \
+	kubectl create secret generic ${KUBE_HOSTKEYS_SECRET} --from-file=${SSH_HOST_KEY_DIRECTORY} ;
 
 setup_kubernetes_access:
 	gcloud --project ${PROJECT_ID} container clusters get-credentials ${KUBE_CLUSTER_NAME} --zone ${KUBE_ZONE}

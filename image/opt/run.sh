@@ -16,6 +16,9 @@ then
   exit 1
 fi
 
+cp -Lrv /var/secrets/ssh_host_keys/* /etc/ssh/
+chmod 700 /etc/ssh/*_key /etc/ssh/*_key.pub
+
 service ssh start 2>&1 | logger -t default -i -p local5.info
 
 if [ $? -ne 0 ]
@@ -34,6 +37,7 @@ fi
 
 sleep 3
 
+# This propagates the environment variable to the CRON
 env | grep GCS_BUCKET > /etc/environment
 
 chown -R $SFTP_USER /var/landing/stage

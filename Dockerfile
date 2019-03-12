@@ -21,6 +21,7 @@ RUN mkdir -p /var/run/pipes/ && \
     mkdir -p /var/staging && \
     mkdir -p /var/run/sshd  && \
     mkdir -p /var/secrets/credentials && \
+    mkdir -p /var/secrets/ssh_host_keys && touch /var/secrets/ssh_host_keys/_holder && \
     mkfifo /var/run/pipes/consolidated && \
     chown syslog:adm /var/run/pipes/consolidated && \
     rm -rf /var/log/*

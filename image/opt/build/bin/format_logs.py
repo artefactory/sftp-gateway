@@ -2,6 +2,7 @@ import json
 import re
 import sys
 import os
+import time
 
 from parsers import parsers
 
@@ -50,6 +51,7 @@ def read():
         print_for_stackdriver("debug", "Opening FIFO")
         with open('/var/run/pipes/consolidated') as handle:
             while True:
+                time.sleep(3)
                 data = handle.readline()
                 if len(data) == 0:
                     print_for_stackdriver("debug", "FIFO Closed")
