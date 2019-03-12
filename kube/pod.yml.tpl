@@ -15,7 +15,10 @@ spec:
       volumes:
       - name: sftp-gateway-credentials
         secret:
-          secretName: {{KUBE_SECRET}}
+          secretName: {{KUBE_CREDENTIALS_SECRET}}
+      - name: sftp-gateway-hostkeys
+        secret:
+          secretName: {{KUBE_HOSTKEYS_SECRET}}
       containers:
       - name: {{KUBE_APP_LABEL}}
         image: {{DOCKER_URL}}
@@ -31,6 +34,9 @@ spec:
         volumeMounts:
         - name: sftp-gateway-credentials
           mountPath: /var/secrets/credentials
+          readOnly: true
+        - name: sftp-gateway-hostkeys
+          mountPath: /var/secrets/ssh_host_keys
           readOnly: true
         ports:
         - containerPort: 22
