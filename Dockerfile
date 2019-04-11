@@ -1,5 +1,15 @@
 FROM ubuntu:18.04
 
+RUN apt-get update && \
+    apt-get install -y lsb-release gnupg curl && \
+    export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
+    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+    apt-get update && \
+    apt-get install -y openssh-server python-pip rsyslog google-cloud-sdk vim && \
+    apt-get -y clean
+
+
 ARG APP_SFTP_GUID
 ARG APP_SFTP_AUTHORIZEDKEYS_DIR
 ARG APP_LANDING_DIR
@@ -9,15 +19,6 @@ ARG APP_LANDING_LOG_DIR
 ARG APP_PIPE_DIR
 ARG APP_RAW_LOG_PIPE
 ARG APP_LANDING_DEV_DIR
-
-RUN apt-get update && \
-    apt-get install -y lsb-release gnupg curl && \
-    export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
-    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-    apt-get update && \
-    apt-get install -y openssh-server python-pip rsyslog google-cloud-sdk vim && \
-    apt-get -y clean
 
 RUN addgroup --gid $APP_SFTP_GUID sftp-users
 

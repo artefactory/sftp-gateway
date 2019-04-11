@@ -1,6 +1,3 @@
-K8S_CLUSTER_NAME=sftp-gateway
-K8S_ZONE=europe-west1-b
-
 APP_NAME=nautilus-gcs-sftp-gateway-${ENV}
 
 APP_CONFIGMAP_NAME=${APP_NAME}-config
