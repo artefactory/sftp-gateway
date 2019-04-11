@@ -1,0 +1,46 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+        heritage: {{ .Release.Service }}
+        release: {{ .Release.Name }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    spec:
+      volumes:
+      - name: {{ .Values.app.secrets.name }}
+        secret:
+          secretName: {{ .Values.app.secrets.name }}
+      containers:
+      - name: {{ .Values.app.name }}
+        image: {{ .Values.app.docker.url }}
+        imagePullPolicy: Always
+        command: ["python", "/opt/app/bin/launch.py"]
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.app.configmap.name }}
+        env:
+        - name: GCP_PROJECT_ID
+          value: {{ .Values.gcp.project.id }}
+        - name: APP_SFTP_USER
+          value: {{ .Values.app.sftp.user }}
+        - name: APP_GCS_BUCKETS
+          value: {{ .Values.app.gcs.buckets }}
+        volumeMounts:
+        - name: {{ .Values.app.secrets.name }}
+          mountPath: {{ .Values.app.secrets.dir }}
+          readOnly: true
+        ports:
+        - containerPort: 22

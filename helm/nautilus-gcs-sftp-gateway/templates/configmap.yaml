@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.configmap.name }}
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+data:
+  {{ range $key, $value := .Values.environment -}}
+  {{$key}}: {{$value | quote}}
+  {{ end -}}

@@ -1,1 +1,0 @@
-* * * * * root  flock -x -n -E 0 /var/run/sync.lock /opt/build/bin/sync.sh | logger -t syncer -i -p local5.warn
