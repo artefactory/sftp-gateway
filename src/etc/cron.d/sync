@@ -1,0 +1,1 @@
+* * * * * root  flock -x -n -E 0 /var/run/sync.lock python /opt/app/bin/sync.py 2>&1 | logger -t syncer -i -p ${APP_RAW_LOG_FACILITY}.info

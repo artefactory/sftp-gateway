@@ -1,0 +1,10 @@
+ENV=prod-manual
+
+K8S_CLUSTER_NAME=datalake-operations
+
+GCP_PROJECT_ID=monoprix-datalake-prod
+
+APP_SERVICE_IP=35.205.242.238
+
+APP_SFTP_USER=monoprix
+APP_GCS_BUCKETS=monoprix-datalake-manual-prod,monoprix-datalake-manual-dev

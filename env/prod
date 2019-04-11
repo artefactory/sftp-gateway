@@ -1,7 +1,9 @@
-GCS_BUCKET=monoprix-datalake-ingest-prod
-PROJECT_ID=monoprix-datalake-prod
-SFTP_USER=monoprix
-SFTP_IP=10.222.0.3
-INTERNAL=true
-KUBE_CLUSTER_NAME=sftp-gateway
-KUBE_ZONE=europe-west3-a
+ENV=prod
+
+GCP_PROJECT_ID=monoprix-datalake-prod
+
+APP_SERVICE_IP=10.222.0.3
+APP_SERVICE_INTERNAL=1
+
+APP_SFTP_USER=monoprix
+APP_GCS_BUCKETS=monoprix-datalake-ingest-prod,monoprix-datalake-ingest-dev

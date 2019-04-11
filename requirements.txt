@@ -1,1 +1,3 @@
-pystache
+click
+python-dotenv[cli]
+pyyaml

@@ -1,5 +1,7 @@
 credentials
 
+config
 kube_generated/
 
 **/*.pyc
+

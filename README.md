@@ -1,4 +1,4 @@
-# gcs-sftp-gateway
+# nautilus-gcs-sftp-gateway
 
 This is a Docker image containing an SSH server and a gsutil rsync script, allowing to create a SFTP-to-GCS gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS.
 
@@ -11,24 +11,18 @@ The repository contains the appropriate files to deploy the container to Kuberne
 -   Make
 -   Google Cloud SDK (AKA `gcloud`)
 -   Kubernetes
+-   Helm
+-   jq
 
 ## Overview
 
-When you run a container based on this image, it creates an SFTP server that can only be accessed by one specified user, and only connect to one specified GCS bucket.
+When you run a container based on this image, it creates an SFTP server that can only be accessed by one specified user, and moves uploaded data to one or more specified GCS buckets.
 
-The user and the bucket are provided at runtime via container Environment variables. When the container starts, it uses the Environment variables to generate the appropriate configuration files and start the services. The container does not persist any data.
+The user and the buckets are provided at runtime via container Environment variables. When the container starts, it uses the Environment variables to generate the appropriate configuration files and start the services. The container does not persist any data.
 
 The container does not contain any credentials, they must be provided at deployment time via a mounted secrets volume. See below for more information.
 
 ## Usage
-
-#### Setup
-
-Install the required dependencies:
-
-```
-pip install -r requirements.txt
-```
 
 #### Makefile
 

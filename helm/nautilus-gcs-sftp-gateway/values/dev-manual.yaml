@@ -1,0 +1,105 @@
+app:
+  configmap:
+    name: nautilus-gcs-sftp-gateway-dev-manual-config
+  docker:
+    image: nautilus-gcs-sftp-gateway-dev-manual
+    registry: eu.gcr.io
+    tag: 1.1.0
+    url: eu.gcr.io/datalakempx/nautilus-gcs-sftp-gateway-dev-manual:1.1.0
+  gcs:
+    buckets: monoprix-datalake-manual-dev
+  landing:
+    dev:
+      dir: /var/landing/dev
+    dir: /var/landing
+    error:
+      dir: /var/landing/stage/error
+    exclude:
+      patterns: '*.tmp'
+    ingest:
+      dir: /var/landing/stage/ingest
+    log:
+      device: /var/landing/dev/log
+      dir: /var/landing/stage/log
+  name: nautilus-gcs-sftp-gateway-dev-manual
+  pipe:
+    dir: /var/run/nautilus-gcs-sftp-gateway-dev-manual/pipes
+  raw:
+    log:
+      facility: local6
+      pipe: /var/run/nautilus-gcs-sftp-gateway-dev-manual/pipes/raw-messages
+  secrets:
+    dir: /var/run/secrets/nautilus-gcs-sftp-gateway-dev-manual
+    name: nautilus-gcs-sftp-gateway-dev-manual-secrets
+  service:
+    internal: '0'
+    ip: 104.199.41.18
+    name: nautilus-gcs-sftp-gateway-dev-manual-service
+    port: '22'
+  sftp:
+    authorizedkeys:
+      dir: /etc/ssh/authorized-keys
+    guid: '9000'
+    port: '22'
+    privatekey:
+      name: nautilus-gcs-sftp-gateway-dev-manual.key
+    publickey:
+      name: nautilus-gcs-sftp-gateway-dev-manual.key.pub
+      path: /var/run/secrets/nautilus-gcs-sftp-gateway-dev-manual/nautilus-gcs-sftp-gateway-dev-manual.key.pub
+    user: monoprix
+    uuid: '9000'
+env: dev-manual
+environment:
+  APP_CONFIGMAP_NAME: nautilus-gcs-sftp-gateway-dev-manual-config
+  APP_DOCKER_IMAGE: nautilus-gcs-sftp-gateway-dev-manual
+  APP_DOCKER_REGISTRY: eu.gcr.io
+  APP_DOCKER_TAG: 1.1.0
+  APP_DOCKER_URL: eu.gcr.io/datalakempx/nautilus-gcs-sftp-gateway-dev-manual:1.1.0
+  APP_GCS_BUCKETS: monoprix-datalake-manual-dev
+  APP_LANDING_DEV_DIR: /var/landing/dev
+  APP_LANDING_DIR: /var/landing
+  APP_LANDING_ERROR_DIR: /var/landing/stage/error
+  APP_LANDING_EXCLUDE_PATTERNS: '*.tmp'
+  APP_LANDING_INGEST_DIR: /var/landing/stage/ingest
+  APP_LANDING_LOG_DEVICE: /var/landing/dev/log
+  APP_LANDING_LOG_DIR: /var/landing/stage/log
+  APP_NAME: nautilus-gcs-sftp-gateway-dev-manual
+  APP_PIPE_DIR: /var/run/nautilus-gcs-sftp-gateway-dev-manual/pipes
+  APP_RAW_LOG_FACILITY: local6
+  APP_RAW_LOG_PIPE: /var/run/nautilus-gcs-sftp-gateway-dev-manual/pipes/raw-messages
+  APP_SECRETS_DIR: /var/run/secrets/nautilus-gcs-sftp-gateway-dev-manual
+  APP_SECRETS_NAME: nautilus-gcs-sftp-gateway-dev-manual-secrets
+  APP_SERVICE_INTERNAL: '0'
+  APP_SERVICE_IP: 104.199.41.18
+  APP_SERVICE_NAME: nautilus-gcs-sftp-gateway-dev-manual-service
+  APP_SERVICE_PORT: '22'
+  APP_SFTP_AUTHORIZEDKEYS_DIR: /etc/ssh/authorized-keys
+  APP_SFTP_GUID: '9000'
+  APP_SFTP_PORT: '22'
+  APP_SFTP_PRIVATEKEY_NAME: nautilus-gcs-sftp-gateway-dev-manual.key
+  APP_SFTP_PUBLICKEY_NAME: nautilus-gcs-sftp-gateway-dev-manual.key.pub
+  APP_SFTP_PUBLICKEY_PATH: /var/run/secrets/nautilus-gcs-sftp-gateway-dev-manual/nautilus-gcs-sftp-gateway-dev-manual.key.pub
+  APP_SFTP_USER: monoprix
+  APP_SFTP_UUID: '9000'
+  ENV: dev-manual
+  GCP_PROJECT_ID: datalakempx
+  GCP_SERVICEACCOUNT_IAM: nautilus-gcs-sftp-gateway-dev-manual-sa@datalakempx.iam.gserviceaccount.com
+  GCP_SERVICEACCOUNT_KEY_NAME: nautilus-gcs-sftp-gateway-dev-manual-sa-key.key
+  GCP_SERVICEACCOUNT_KEY_PATH: /var/run/secrets/nautilus-gcs-sftp-gateway-dev-manual/nautilus-gcs-sftp-gateway-dev-manual-sa-key.key
+  GCP_SERVICEACCOUNT_NAME: nautilus-gcs-sftp-gateway-dev-manual-sa
+  K8S_CLUSTER_NAME: datalake-operations
+  K8S_ZONE: europe-west1-b
+gcp:
+  project:
+    id: datalakempx
+  serviceaccount:
+    iam: nautilus-gcs-sftp-gateway-dev-manual-sa@datalakempx.iam.gserviceaccount.com
+    key:
+      name: nautilus-gcs-sftp-gateway-dev-manual-sa-key.key
+      path: /var/run/secrets/nautilus-gcs-sftp-gateway-dev-manual/nautilus-gcs-sftp-gateway-dev-manual-sa-key.key
+    name: nautilus-gcs-sftp-gateway-dev-manual-sa
+k8s:
+  cluster:
+    name: datalake-operations
+  zone: europe-west1-b
+

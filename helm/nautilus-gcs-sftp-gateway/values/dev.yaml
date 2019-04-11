@@ -1,0 +1,70 @@
+app:
+  configmap:
+    name: nautilus-gcs-sftp-gateway-config
+  docker:
+    image: nautilus-gcs-sftp-gateway
+    registry: eu.gcr.io
+    tag: v15
+    url: eu.gcr.io/datalakempx/nautilus-gcs-sftp-gateway:v15
+  gcs:
+    buckets: monoprix-datalake-ingest-dev
+  landing:
+    dir: /var/landing
+  name: nautilus-gcs-sftp-gateway
+  secrets:
+    dir: /var/run/secrets/nautilus-gcs-sftp-gateway
+    name: nautilus-gcs-sftp-gateway-secrets
+  service:
+    internal: '1'
+    ip: 10.222.0.18
+    name: nautilus-gcs-sftp-gateway-service
+    port: '22'
+  sftp:
+    port: '22'
+    privatekey:
+      name: nautilus-gcs-sftp-gateway.key
+    publickey:
+      name: nautilus-gcs-sftp-gateway.key.pub
+      path: /var/run/secrets/nautilus-gcs-sftp-gateway/nautilus-gcs-sftp-gateway.key.pub
+    user: monoprix
+environment:
+  APP_CONFIGMAP_NAME: nautilus-gcs-sftp-gateway-config
+  APP_DOCKER_IMAGE: nautilus-gcs-sftp-gateway
+  APP_DOCKER_REGISTRY: eu.gcr.io
+  APP_DOCKER_TAG: v15
+  APP_DOCKER_URL: eu.gcr.io/datalakempx/nautilus-gcs-sftp-gateway:v15
+  APP_GCS_BUCKETS: monoprix-datalake-ingest-dev
+  APP_LANDING_DIR: /var/landing
+  APP_NAME: nautilus-gcs-sftp-gateway
+  APP_SECRETS_DIR: /var/run/secrets/nautilus-gcs-sftp-gateway
+  APP_SECRETS_NAME: nautilus-gcs-sftp-gateway-secrets
+  APP_SERVICE_INTERNAL: '1'
+  APP_SERVICE_IP: 10.222.0.18
+  APP_SERVICE_NAME: nautilus-gcs-sftp-gateway-service
+  APP_SERVICE_PORT: '22'
+  APP_SFTP_PORT: '22'
+  APP_SFTP_PRIVATEKEY_NAME: nautilus-gcs-sftp-gateway.key
+  APP_SFTP_PUBLICKEY_NAME: nautilus-gcs-sftp-gateway.key.pub
+  APP_SFTP_PUBLICKEY_PATH: /var/run/secrets/nautilus-gcs-sftp-gateway/nautilus-gcs-sftp-gateway.key.pub
+  APP_SFTP_USER: monoprix
+  GCP_PROJECT_ID: datalakempx
+  GCP_SERVICEACCOUNT_IAM: nautilus-gcs-sftp-gateway-sa@datalakempx.iam.gserviceaccount.com
+  GCP_SERVICEACCOUNT_KEY_NAME: nautilus-gcs-sftp-gateway-sa-key.key
+  GCP_SERVICEACCOUNT_KEY_PATH: /var/run/secrets/nautilus-gcs-sftp-gateway/nautilus-gcs-sftp-gateway-sa-key.key
+  GCP_SERVICEACCOUNT_NAME: nautilus-gcs-sftp-gateway-sa
+  K8S_CLUSTER_NAME: sftp-gateway
+  K8S_ZONE: europe-west3-a
+gcp:
+  project:
+    id: datalakempx
+  serviceaccount:
+    iam: nautilus-gcs-sftp-gateway-sa@datalakempx.iam.gserviceaccount.com
+    key:
+      name: nautilus-gcs-sftp-gateway-sa-key.key
+      path: /var/run/secrets/nautilus-gcs-sftp-gateway/nautilus-gcs-sftp-gateway-sa-key.key
+    name: nautilus-gcs-sftp-gateway-sa
+k8s:
+  cluster:
+    name: sftp-gateway
+  zone: europe-west3-a
+

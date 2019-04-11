@@ -1,6 +1,10 @@
-GCS_BUCKET=monoprix-datalake-manual-dev
-PROJECT_ID=datalakempx
-SFTP_USER=monoprix
-SFTP_IP=35.228.205.241
-KUBE_CLUSTER_NAME=ingestion
-KUBE_ZONE=europe-north1-a
+ENV=dev-manual
+
+K8S_CLUSTER_NAME=datalake-operations
+
+GCP_PROJECT_ID=datalakempx
+
+APP_SERVICE_IP=104.199.41.18
+
+APP_SFTP_USER=monoprix
+APP_GCS_BUCKETS=monoprix-datalake-manual-dev
