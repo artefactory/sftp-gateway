@@ -131,6 +131,11 @@ $(MK_HELM_CONFIG): $(MK_GENERATED_CONFIG) $(MK_CREDENTIALS_FILES) helm/nautilus-
 	python ./bin/env-to-values.py --env-file $(MK_GENERATED_CONFIG) > $(MK_HELM_CONFIG)
 
 
+.PHONY: helm_setup
+helm_setup:
+	kubectl apply -f helm/rbac-tiller.yaml
+	helm init --service-account tiller --upgrade
+
 .PHONY: helm_debug
 helm_debug: helm_generate_values
 	helm install --dry-run --debug --set gcloud.user=${GCLOUD_USER} -f helm/nautilus-gcs-sftp-gateway/values/${environment}.yaml ./helm/nautilus-gcs-sftp-gateway

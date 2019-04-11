@@ -2,6 +2,9 @@ ENV=prod
 
 GCP_PROJECT_ID=***REMOVED***-datalake-prod
 
+K8S_CLUSTER_NAME=sftp-gateway
+K8S_ZONE=europe-west3-a
+
 APP_SERVICE_IP=10.222.0.3
 APP_SERVICE_INTERNAL=1
 
