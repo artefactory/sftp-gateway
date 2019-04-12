@@ -4,6 +4,9 @@ This is a Docker image containing an SSH server and a gsutil rsync script, allow
 
 The repository contains the appropriate files to deploy the container to Kubernetes.
 
+## Maintainer
+- Douglas Willcocks (@d-tw or douglas@artefact.com)
+
 ## Before you do anything
 
 - Run `pip install -r requirements.txt` before trying to build/configure anything.
