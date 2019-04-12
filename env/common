@@ -1,31 +1,50 @@
+# The name of app, used for naming K8S objects, various paths, etc.
+# Can be changed if necessary
 APP_NAME=nautilus-gcs-sftp-gateway-${ENV}
 
+# The name of the K8S configmap
 APP_CONFIGMAP_NAME=${APP_NAME}-config
 
+# The name of the K8S secrets map
 APP_SECRETS_NAME=${APP_NAME}-secrets
+# The directory where the app will expect to find various secrets such as SFTP host keys
 APP_SECRETS_DIR=/var/run/secrets/${APP_NAME}
 
+# The name of the K8S service
 APP_SERVICE_NAME=${APP_NAME}-service
+# The K8S service port (not used to configure the port that the actuall SFTP server will listen on)
 APP_SERVICE_PORT=22
+# When this directive is set to 1, the LoadBalancer service assumes the
+# IP address is an internal VPC address – only works on GCP GKE
 APP_SERVICE_INTERNAL=0
 
+# The name of the docker image
 APP_DOCKER_IMAGE=${APP_NAME}
 APP_DOCKER_REGISTRY=eu.gcr.io
 APP_DOCKER_TAG=1.1.0
 APP_DOCKER_URL=${APP_DOCKER_REGISTRY}/${GCP_PROJECT_ID}/${APP_DOCKER_IMAGE}:${APP_DOCKER_TAG}
 
+# The name of the GCP service account that will be created
 GCP_SERVICEACCOUNT_NAME=${APP_NAME}-sa
+GCP_SERVICEACCOUNT_IAM=${GCP_SERVICEACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com
+# The name and path of the GCP service account key, the app will expect the JSON file
+# to be available in the container at this location
 GCP_SERVICEACCOUNT_KEY_NAME=${APP_NAME}-sa-key.key
 GCP_SERVICEACCOUNT_KEY_PATH=${APP_SECRETS_DIR}/${GCP_SERVICEACCOUNT_KEY_NAME}
-GCP_SERVICEACCOUNT_IAM=${GCP_SERVICEACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com
 
 APP_SFTP_AUTHORIZEDKEYS_DIR=/etc/ssh/authorized-keys
 APP_SFTP_PRIVATEKEY_NAME=${APP_NAME}.key
+# The name and path of the public SSH key
 APP_SFTP_PUBLICKEY_NAME=${APP_NAME}.key.pub
 APP_SFTP_PUBLICKEY_PATH=${APP_SECRETS_DIR}/${APP_SFTP_PUBLICKEY_NAME}
+# The port that the SFTP server will listen on in the container
 APP_SFTP_PORT=22
+
 APP_SFTP_UUID=9000
 APP_SFTP_GUID=9000
+
+# A comma separated list of patterns to use to exclude files from uploading (uses POSX patterns, not regex)
+APP_LANDING_EXCLUDE_PATTERNS=*.tmp
 
 APP_LANDING_DIR=/var/landing
 APP_LANDING_DEV_DIR=${APP_LANDING_DIR}/dev
@@ -33,8 +52,8 @@ APP_LANDING_LOG_DEVICE=${APP_LANDING_DEV_DIR}/log
 APP_LANDING_INGEST_DIR=${APP_LANDING_DIR}/stage/ingest
 APP_LANDING_ERROR_DIR=${APP_LANDING_DIR}/stage/error
 APP_LANDING_LOG_DIR=${APP_LANDING_DIR}/stage/log
-APP_LANDING_EXCLUDE_PATTERNS=*.tmp
 
+# Internal logging setup
 APP_PIPE_DIR=/var/run/${APP_NAME}/pipes
 APP_RAW_LOG_PIPE=${APP_PIPE_DIR}/raw-messages
 APP_RAW_LOG_FACILITY=local6

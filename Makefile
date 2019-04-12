@@ -8,13 +8,12 @@ endif
 # Generate complete config files
 ifndef SKIP_CONFIG
 	CONFIG := $(shell ENV="$(environment)" SKIP_CONFIG=1 make generate_config)
+	GCLOUD_USER=$(shell gcloud config list account --format "value(core.account)")
+
+	ENV_FILE = config/${environment}
+
+	include ${ENV_FILE}
 endif
-
-GCLOUD_USER=$(shell gcloud config list account --format "value(core.account)")
-
-ENV_FILE = config/${environment}
-
-include ${ENV_FILE}
 
 .PHONY: docker_publish
 docker_publish: docker_build docker_configure_auth
@@ -50,7 +49,7 @@ create_gcp_service_account:
 		gcloud --project ${GCP_PROJECT_ID} iam service-accounts create ${GCP_SERVICEACCOUNT_NAME} --display-name ${GCP_SERVICEACCOUNT_NAME} ; \
 	fi
 
-
+GCP_SERVICEACCOUNT_KEY_NAME ?= 'gcp-sa-key'
 MK_GCP_SERVICEACCOUNT_KEY_NAME = credentials/${environment}/files/${GCP_SERVICEACCOUNT_KEY_NAME}
 
 .PHONY: create_gcp_service_account_key
@@ -64,6 +63,8 @@ MK_CREDENTIALS_DIR = credentials/${environment}
 MK_CREDENTIALS_FILES_DIR = ${MK_CREDENTIALS_DIR}/files
 MK_CREDENTIALS_ENV = $(MK_CREDENTIALS_DIR)/env
 MK_CREDENTIALS_FILES = $(wildcard $(MK_CREDENTIALS_FILES_DIR)/*)
+
+APP_SFTP_PRIVATEKEY_NAME ?= 'priv-key'
 MK_APP_SFTP_PRIVATEKEY = ${MK_CREDENTIALS_FILES_DIR}/${APP_SFTP_PRIVATEKEY_NAME}
 
 .PHONY: create_ssh_key
@@ -119,7 +120,7 @@ MK_HELM_CONFIG = helm/nautilus-gcs-sftp-gateway/values/${environment}.yaml
 MK_HELM_SECRETS = helm/nautilus-gcs-sftp-gateway/secrets/${environment}
 
 .PHONY: helm_generate_values
-helm_generate_values: $(MK_HELM_CONFIG)
+helm_generate_values: $(MK_HELM_CONFIG) credentials
 
 helm/nautilus-gcs-sftp-gateway/values:
 	mkdir -p helm/nautilus-gcs-sftp-gateway/values
