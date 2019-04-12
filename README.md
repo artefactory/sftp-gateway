@@ -4,15 +4,23 @@ This is a Docker image containing an SSH server and a gsutil rsync script, allow
 
 The repository contains the appropriate files to deploy the container to Kubernetes.
 
+## Before you do anything
+
+- Run `pip install -r requirements.txt` before trying to build/configure anything.
+- Create an env file for your configuration in `./env` (see Configuration below)
+
 ## Requirements
 
 -   Docker
 -   Python
 -   Make
 -   Google Cloud SDK (AKA `gcloud`)
+-   jq
+
+For Kubernetes:
+
 -   Kubernetes
 -   Helm
--   jq
 
 ## Overview
 
@@ -20,36 +28,147 @@ When you run a container based on this image, it creates an SFTP server that can
 
 The user and the buckets are provided at runtime via container Environment variables. When the container starts, it uses the Environment variables to generate the appropriate configuration files and start the services. The container does not persist any data.
 
-The container does not contain any credentials, they must be provided at deployment time via a mounted secrets volume. See below for more information.
+The container does not contain any credentials, they must be provided at deployment time via a mounted secrets volume on Kubernetes, or a mounted volume for vanilla Docker. See below for more information.
 
 ## Usage
 
-#### Makefile
+### Configuration
+All of the configuration is managed through the environment files stored in the `./env` directory. There is a `common` environment file that contains the majority of the configuration directives, and typically doesn't need to be changed. You can then create additional configuration files for different environments/clients, such as `dev`, `prod`, or `monoprix`.
 
-Most of the commands to use the container are in a `Makefile`, which simplifies all of the steps. You don't need to use the `Makefile` if you want to go off the beaten path.
+The environment variables specified in the environment files override the values defined in the `common` file during processing.
 
-The header of the `Makefile` contains a number of variables that you can change, such as the docker image name, the container registry to be used, etc.
+These environment files are used to automatically generate various other configuration files (Helm `values.yaml` files, Kubernetes `configmap` files, etc.) – you shouldn't need to change anything other than the environment config files to configure any aspect of the system.
 
-##### Config Environments
+You can read the `common` and `sample` files in `./env` to understand what the configuration directives are for.
 
-The different `Makefile` commands rely on Environment variables to run correctly. You need to create an environment file in the `env` directory, with the following variables:
+### Credentials
+In order for the service to run, you need to generate/provide various credential files:
 
-| Variable          |  Description                                                                   |                        Example |
-| ----------------- | ------------------------------------------------------------------------------ | -----------------------------: |
-| GCS_BUCKET        | The name of the GCS bucket that will be used (must be in the same GCP Project) | `monoprix-datalake-manual-dev` |
-| PROJECT_ID        | The ID of the GCP Project                                                      |                  `datalakempx` |
-| SFTP_USER         | The username that will be used to access the SFTP server                       |                     `monoprix` |
-| SFTP_IP           | The fixed IP address that will expose the SFTP server (see below)              |               `35.228.205.241` |
-| KUBE_CLUSTER_NAME | The Kubernetes cluster name                                                    |                    `ingestion` |
-| KUBE_ZONE         | The Kubernetes cluster zone                                                    |              `europe-north1-a` |
+- GCP Service Account key file, to grant the image the right to upload files to a GCS bucket
+- SSH Public key file, the public par of the public-private key used to connect to the SFTP server
+- SSH Host keys, the server's identity keys
 
-You can then run the Makefile with the name of the environment (for example, for an env file name `env/production`):
+#### Vanilla Docker
+If you're using vanilla Docker, a directory containing the above secret files should be mounted onto the container to the path configured by `$APP_SECRETS_DIR` (by default, `/var/run/secrets/nautilus-gcs-sftp-gateway-${ENV}`).
+
+#### Kubernetes
+If you're using Kubernetes, the credentials should be provided through mounted secrets volume. It's recommended to use the provided Helm Chart to handle all of the specfile generation and deployment. See the Helm section below for more info.
+
+#### GCP Service Account
+Your container will need a GCP Service Account in order to write to GCS buckets; the service account key file should be provided as a secret to the container with the name defined by `$GCP_SERVICEACCOUNT_KEY_NAME` (by default, `nautilus-gcs-sftp-gateway-${ENV}-sa-key.key`)
+
+You can generate your own manually through the [GCP UI](https://cloud.google.com/iam/docs/creating-managing-service-account-keys), or by running the following command:
+
+```shell
+ENV=your-env-name make create_gcp_service_account_key
+```
+
+The service account key will be placed in `./credentials/<your-env-name>/files/`.
+
+#### SSH Public Key
+The SFTP server only accepts public/private key authentication, you need to create or provide a public/private key pair and mount the public key in the container as a secret.
+
+You can generate your own public/private key pair by running the command:
+
+```shell
+ENV=your-env-name make create_ssh_key
+```
+
+The keys will be placed in `./credentials/<your-env-name>/files/`.
+
+#### SSH Host Keys (Optional)
+When you connect to an SFTP server, before verifying your identity it sends you a unique signature that identifies the server. This signature is typically stored by SFTP clients to verify the identity of the server the next time you connect.
+
+As the docker containers are emphemeral, different instances of the image will have different host keys, which can cause SFTP clients to complain with the following error:
 
 ```
-ENV=production make kubernetes_run
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the RSA key sent by the remote host is x.
+Please contact your system administrator.
 ```
 
-##### Generating a fixed IP address
+To avoid this, you can provide your own SSH host keys that will be used for each container. The host keys should be mounted to `$APP_SECRETS_DIR`, and have the `ssh_host_` prefix:
+
+```shell
+% ls -l
+-rw-------  1 d_tw  staff  1381 Apr  9 19:23 ssh_host_dsa_key
+-rw-------  1 d_tw  staff   513 Apr  9 19:23 ssh_host_ecdsa_key
+-rw-------  1 d_tw  staff   411 Apr  9 19:23 ssh_host_ed25519_key
+-rw-------  1 d_tw  staff  3381 Apr  9 19:23 ssh_host_rsa_key
+```
+
+You can generate your own SSH host keys by running:
+
+```shell
+ENV=your-env-name make create_ssh_host_keys
+```
+
+The files will be placed in `./credentials/<your-env-name>/files/`.
+
+### Building the Docker image
+
+To build the image, just run:
+
+```shell
+ENV=your-env-name make docker_build
+```
+
+You can also publish the image to a registry:
+
+```shell
+ENV=your-env-name make docker_publish
+```
+
+### Running as standalone Docker
+To run the image standalone, you need to provide 3 things:
+
+- Environment variables via the `--env-file` option
+- A secrets volume mount
+- A port binding
+
+Having written your config file in `./env`, run
+
+```shell
+ENV=your-env-name make generate_config
+```
+
+This will output a resolved config file to `./config/<your-env-name>`.
+
+You can run the docker image with:
+
+```shell
+docker run --rm -it --env-file ./config/${ENV} \
+                    -v ./credentials/${ENV}/files:$APP_SECRETS_DIR \
+                    -p ${HOST_PORT}:${APP_SFTP_PORT} \
+                    ${APP_DOCKER_IMAGE}
+```
+
+Where `HOST_PORT` is the port on the host machine to which docker should bind (probably not 22, since you might already have an SSH service), `ENV` is the name of your environment, and the `APP_*` variables are the values taken from `./config/<your-env-name>`.
+
+### Deploying to GKE
+The project contains a Helm Chart that can deploy the service to a Kubernetes cluster.
+
+You can setup Helm on your cluster, if not already done, by running:
+
+```shell
+make helm_setup
+```
+
+Once that's done, you can just run:
+
+```
+ENV=your-env-name make helm_install
+```
+
+This will automatically pick up any changes made to the relevant files in `./env` and `./credentials`, regenerate config, generate the approriate `values.yaml` file for Helm, and deploy the changes to your Kubernetes cluster.
+
+
+#### Generating a fixed IP address
 
 In order to expose the SFTP server, you need to reserve a static IP address that will be used by Kubernetes. The IP address needs to be in the same zone as the Kubernetes cluster.
 
@@ -57,87 +176,12 @@ In order to expose the SFTP server, you need to reserve a static IP address that
 gcloud compute addresses create [ADDRESS_NAME] --region [KUBE_ZONE] --ip-version IPV4
 ```
 
-#### Credentials
-
-For the container to run correctly, it requires you to provide a GCP service account key and an SFTP public key.
-You can use the `Makefile` to generate credentials if you don't already have them.
-
-```
-ENV=dev make credentials
-```
-
-This command will:
-
--   Create a `./credentials/{ENV}/` folder
--   Generate a new Public/Private key pair in the folder
--   Create a GCP Service account
--   Create a new Service account JSON key in the folder
-
-**Note:** You need to grant the appropriate GCS access rights to the service account.
-
-If you want to provide your own service account key or public SFTP key, you can just put them in the `./credentials/{ENV}` folder called `key.json` and `sftp.key.pub` respectively.
-
-#### Directories
+### Connecting to the SFTP server
 
 For various technical reasons relating to [SFTP Chrooting](https://wiki.archlinux.org/index.php/SFTP_chroot), the SFTP users will see two directories (`stage` and `dev`) when they connect to the server.
 
-Only the contents of the `stage` directory are mapped to GCS.
+Only the contents of the `stage/ingest` directory are mapped to GCS.
 
-### Building the image
 
-To build the image, just run:
-
-```
-make docker_build
-```
-
-You can also publish the image to a registry:
-
-```
-make docker_publish
-```
-
-### Running the image on Kubernetes
-
-Assuming you have a Kubernetes cluster, you can run the image as a Pod, exposed via a LoadBalancer Service. This repository contains the spec files required to generate a Service and a High-Availability Deployment of 2 containers.
-
-More information on the Kubernetes config can be found in the spec files in the `./kube` directory.
-
-If you're feeling brave, you can just run
-
-```
-make kubernetes_run
-```
-
-Which will:
-
--   Build the image
--   Publish the image to the registry
--   Create a ClusterRoleBinding on K8S giving you admin rights
--   Create a GCP Service account to be used by the container
--   Create a GCP Service account key
--   Generate an SSH key
--   Create a K8S Secret, containing the credentials
--   Create a K8S Service with a NodePort
--   Create a K8S Deployment with 2 running instances
-
-### Logging
-
-The relevant logs from the three primary systems on the container are sent to STDOUT in a standard format for ease of monitoring.
-
-The log entries are in a JSON format which is compatible with Stackdriver, so if you run your container on GCS or Kubernetes you get logging for free :)
-
-```json
-{
-    "message": "User monoprix from 10.222.0.18 connected to SFTP subsystem",
-    "timestamp": "2018-09-18T09:13:37Z",
-    "severity": "INFO",
-    "labels": {
-      "event": "sftp_connected",    
-      "ip_address": "10.222.0.18",
-      "pid": 59,
-      "process": "internal-sftp",    
-      "user": "monoprix"    
-    }
-}
-```
+### Logging output
+The docker container logs various events to STDOUT, each log entry is a JSON object that is compatible with [Stackdriver Structured Logs](https://cloud.google.com/logging/docs/structured-logging).

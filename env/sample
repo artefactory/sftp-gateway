@@ -1,0 +1,19 @@
+
+# The name of the environment, must be the same name as the file
+ENV=sample
+
+# The name and zone of your GKE K8S cluster
+K8S_CLUSTER_NAME=sftp-gateway
+K8S_ZONE=europe-west1-b
+
+# The name of the GCP Project
+GCP_PROJECT_ID=datalakempx
+
+# When using K8S, this will be the IP Address of the LoadBalancer service
+APP_SERVICE_IP=10.222.0.18
+
+# The username that will be allowed to connect to the SFTP server
+APP_SFTP_USER=monoprix
+
+# A comma separated list of GCS Bucket names that will be the destinations for file replication
+APP_GCS_BUCKETS=monoprix-datalake-ingest-dev

@@ -25,7 +25,8 @@ def main():
 
     for f in files:
         upload_file_to_buckets(f)
-    else:
+
+    if not files:
         log.info("No files to process")
 
 
