@@ -11,3 +11,5 @@ from commands.create_user import create_user
 from commands.create_sftp_config import create_sftp_config
 from commands.create_rsyslog_config import create_rsyslog_config
 from commands.configure_gcloud import configure_gcloud
+from commands.create_directories import create_directories
+from commands.move_uploaded import move_uploaded, move_existing

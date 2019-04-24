@@ -1,5 +1,5 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ .Values.app.name }}
   labels:
@@ -42,5 +42,15 @@ spec:
         - name: {{ .Values.app.secrets.name }}
           mountPath: {{ .Values.app.secrets.dir }}
           readOnly: true
+        - name: landing
+          mountPath: {{ .Values.app.landing.dir }}
         ports:
         - containerPort: 22
+  volumeClaimTemplates:
+  - metadata:
+      name: landing
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Gi

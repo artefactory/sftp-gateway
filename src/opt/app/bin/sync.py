@@ -2,7 +2,6 @@ import tempfile
 import shutil
 import os
 import glob
-import fnmatch
 import command
 import config
 import csv
@@ -12,16 +11,11 @@ import copy
 import reraise
 import log
 
-if hasattr(config, 'APP_LANDING_EXCLUDE_PATTERNS'):
-    _filters = config.APP_LANDING_EXCLUDE_PATTERNS.split(',')
-else:
-    _filters = []
-
 
 def main():
     log.info("Starting sync")
 
-    files = glob.glob(os.path.join(config.APP_LANDING_INGEST_DIR, '*'))
+    files = glob.glob(os.path.join(config.APP_LANDING_UPLOAD_DIR, '*'))
 
     for f in files:
         upload_file_to_buckets(f)
@@ -30,22 +24,10 @@ def main():
         log.info("No files to process")
 
 
-def should_skip_file(f):
-    for _filter in _filters:
-        if fnmatch.fnmatch(f, _filter):
-            return True
-    return False
-
-
 def upload_file_to_buckets(file_path):
     work_directory = tempfile.mkdtemp()
 
     log_labels = {'basename': os.path.basename(file_path), 'file': file_path}
-
-    if should_skip_file(file_path):
-        log.info("Skipping file {}".format(file_path), **log_labels)
-        return
-
     working_copy = os.path.join(work_directory, os.path.basename(file_path))
 
     log.info("Copying {} to {}".format(file_path, working_copy), **log_labels)
