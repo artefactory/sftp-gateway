@@ -1,6 +1,6 @@
 # The name of app, used for naming K8S objects, various paths, etc.
 # Can be changed if necessary
-APP_NAME=nautilus-gcs-sftp-gateway-${ENV}
+APP_NAME=nautilus-gcs-${ENV}
 
 # The name of the K8S configmap
 APP_CONFIGMAP_NAME=${APP_NAME}-config
@@ -21,7 +21,7 @@ APP_SERVICE_INTERNAL=0
 # The name of the docker image
 APP_DOCKER_IMAGE=${APP_NAME}
 APP_DOCKER_REGISTRY=eu.gcr.io
-APP_DOCKER_TAG=1.1.0
+APP_DOCKER_TAG=1.1.2
 APP_DOCKER_URL=${APP_DOCKER_REGISTRY}/${GCP_PROJECT_ID}/${APP_DOCKER_IMAGE}:${APP_DOCKER_TAG}
 
 # The name of the GCP service account that will be created
@@ -50,8 +50,8 @@ APP_LANDING_DIR=/var/landing
 APP_LANDING_DEV_DIR=${APP_LANDING_DIR}/dev
 APP_LANDING_LOG_DEVICE=${APP_LANDING_DEV_DIR}/log
 APP_LANDING_INGEST_DIR=${APP_LANDING_DIR}/stage/ingest
+APP_LANDING_UPLOAD_DIR=${APP_LANDING_DIR}/.upload
 APP_LANDING_ERROR_DIR=${APP_LANDING_DIR}/stage/error
-APP_LANDING_LOG_DIR=${APP_LANDING_DIR}/stage/log
 
 # Internal logging setup
 APP_PIPE_DIR=/var/run/${APP_NAME}/pipes

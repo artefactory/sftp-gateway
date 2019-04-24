@@ -13,9 +13,6 @@ RUN apt-get update && \
 ARG APP_SFTP_GUID
 ARG APP_SFTP_AUTHORIZEDKEYS_DIR
 ARG APP_LANDING_DIR
-ARG APP_LANDING_INGEST_DIR
-ARG APP_LANDING_ERROR_DIR
-ARG APP_LANDING_LOG_DIR
 ARG APP_PIPE_DIR
 ARG APP_RAW_LOG_PIPE
 ARG APP_LANDING_DEV_DIR
@@ -25,10 +22,7 @@ RUN addgroup --gid $APP_SFTP_GUID sftp-users
 RUN mkdir -p $APP_PIPE_DIR && \
     mkdir -p $APP_SFTP_AUTHORIZEDKEYS_DIR && \
     mkdir -p /run/sshd && \
-    mkdir -p $APP_LANDING_DEV_DIR && \
-    mkdir -p $APP_LANDING_INGEST_DIR && \
-    mkdir -p $APP_LANDING_ERROR_DIR && \
-    mkdir -p $APP_LANDING_LOG_DIR && \
+    mkdir -p $APP_LANDING_DIR && \
     mkdir -p /var/run/sshd  && \
     mkfifo $APP_RAW_LOG_PIPE && chown syslog:adm $APP_RAW_LOG_PIPE && \
     rm -rf /var/log/*

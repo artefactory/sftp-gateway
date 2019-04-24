@@ -15,6 +15,18 @@ ifndef SKIP_CONFIG
 	include ${ENV_FILE}
 endif
 
+
+.PHONY: clean
+clean:
+	find . -name "*pyc" -exec rm -f {} \;
+
+.PHONY: clean_config
+clean_config:
+	rm -rf config
+	rm -rf helm/secrets
+	rm -rf helm/values
+
+
 .PHONY: docker_publish
 docker_publish: docker_build docker_configure_auth
 	docker tag ${APP_DOCKER_IMAGE} ${APP_DOCKER_REGISTRY}/${GCP_PROJECT_ID}/${APP_DOCKER_IMAGE}:${APP_DOCKER_TAG}
@@ -25,7 +37,7 @@ docker_configure_auth:
 	gcloud --project ${GCP_PROJECT_ID} auth configure-docker
 
 .PHONY: docker_build
-docker_build:
+docker_build: clean generate_config
 	build_args=$$(for i in $$(cat ${ENV_FILE}); do out+="--build-arg $${i} " ; done; echo $${out};out="") && \
 	docker build --rm -t ${APP_DOCKER_IMAGE} $${build_args} .
 
@@ -53,10 +65,10 @@ GCP_SERVICEACCOUNT_KEY_NAME ?= 'gcp-sa-key'
 MK_GCP_SERVICEACCOUNT_KEY_NAME = credentials/${environment}/files/${GCP_SERVICEACCOUNT_KEY_NAME}
 
 .PHONY: create_gcp_service_account_key
-create_gcp_service_account_key: credentials_dir create_gcp_service_account $(MK_GCP_SERVICEACCOUNT_KEY_NAME)
+create_gcp_service_account_key: $(MK_GCP_SERVICEACCOUNT_KEY_NAME)
 
 
-$(MK_GCP_SERVICEACCOUNT_KEY_NAME):
+$(MK_GCP_SERVICEACCOUNT_KEY_NAME): credentials_dir create_gcp_service_account
 	gcloud --project ${GCP_PROJECT_ID} iam service-accounts keys create ${MK_GCP_SERVICEACCOUNT_KEY_NAME} --iam-account ${GCP_SERVICEACCOUNT_IAM}
 
 MK_CREDENTIALS_DIR = credentials/${environment}

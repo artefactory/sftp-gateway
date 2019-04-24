@@ -1,4 +1,5 @@
 import commands
+import events
 import log
 import sys
 
@@ -6,6 +7,7 @@ import sys
 if __name__ == '__main__':
 
     try:
+        commands.create_directories()
 
         commands.populate_environment()
         commands.create_user()
@@ -19,11 +21,16 @@ if __name__ == '__main__':
 
         commands.create_rsyslog_config()
 
+        commands.move_existing()
+
         commands.start_rsyslog()
         commands.start_ssh_server()
         commands.start_cron()
 
-        log.read_log_events()
+        events.register_event_handler('log', log.log_handler)
+        events.register_event_handler('move_uploaded', commands.move_uploaded)
+
+        events.handle_events()
 
     except Exception as ex:
         log.exception(ex)
