@@ -1,6 +1,6 @@
 # Load config values
 ifndef ENV
-	environment = local
+	environment = dev
 else
 	environment = ${ENV}
 endif
@@ -61,14 +61,14 @@ create_gcp_service_account:
 		gcloud --project ${GCP_PROJECT_ID} iam service-accounts create ${GCP_SERVICEACCOUNT_NAME} --display-name ${GCP_SERVICEACCOUNT_NAME} ; \
 	fi
 
-GCP_SERVICEACCOUNT_KEY_NAME ?= 'gcp-sa-key'
+GCP_SERVICEACCOUNT_KEY_NAME ?= dummy-service-account
 MK_GCP_SERVICEACCOUNT_KEY_NAME = credentials/${environment}/files/${GCP_SERVICEACCOUNT_KEY_NAME}
 
 .PHONY: create_gcp_service_account_key
-create_gcp_service_account_key: $(MK_GCP_SERVICEACCOUNT_KEY_NAME)
+create_gcp_service_account_key: create_gcp_service_account credentials_dir $(MK_GCP_SERVICEACCOUNT_KEY_NAME)
 
 
-$(MK_GCP_SERVICEACCOUNT_KEY_NAME): credentials_dir create_gcp_service_account
+$(MK_GCP_SERVICEACCOUNT_KEY_NAME):
 	gcloud --project ${GCP_PROJECT_ID} iam service-accounts keys create ${MK_GCP_SERVICEACCOUNT_KEY_NAME} --iam-account ${GCP_SERVICEACCOUNT_IAM}
 
 MK_CREDENTIALS_DIR = credentials/${environment}
@@ -76,13 +76,15 @@ MK_CREDENTIALS_FILES_DIR = ${MK_CREDENTIALS_DIR}/files
 MK_CREDENTIALS_ENV = $(MK_CREDENTIALS_DIR)/env
 MK_CREDENTIALS_FILES = $(wildcard $(MK_CREDENTIALS_FILES_DIR)/*)
 
-APP_SFTP_PRIVATEKEY_NAME ?= 'priv-key'
+APP_SFTP_PUBLICKEY_NAME ?= dummy-public-key-value
+APP_SFTP_PRIVATEKEY_NAME ?= dummy-private-key-value
+MK_APP_SFTP_PUBLICKEY = ${MK_CREDENTIALS_FILES_DIR}/${APP_SFTP_PUBLICKEY_NAME}
 MK_APP_SFTP_PRIVATEKEY = ${MK_CREDENTIALS_FILES_DIR}/${APP_SFTP_PRIVATEKEY_NAME}
 
 .PHONY: create_ssh_key
-create_ssh_key: credentials_dir $(MK_APP_SFTP_PRIVATEKEY)
+create_ssh_key: credentials_dir $(MK_APP_SFTP_PUBLICKEY)
 
-$(MK_APP_SFTP_PRIVATEKEY):
+$(MK_APP_SFTP_PUBLICKEY):
 	ssh-keygen -N "" -f ${MK_APP_SFTP_PRIVATEKEY}
 
 

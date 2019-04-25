@@ -20,18 +20,14 @@ extractors.append(Extractor(
     ['user', 'ip_address']
 ))
 
-commands = ['open', 'close', 'read', 'write', 'lstat', 'fstat', 'opendir', 'readdir', 'realpath', 'stat', 'rename', 'posix-rename']
-
-
-for command in commands:
-    extractors.append(Extractor(
-        'null',
-        r'^{}( name)? \"(?P<path>.+?)\".*$'.format(command),
-        'info',
-        '#Unused',
-        ['path'],
-        fn=lambda x, y, z: False
-    ))
+extractors.append(Extractor(
+    'sftp_rename',
+    r'^posix-rename old "(?P<old_path>.+?)" new "(?P<path>.+?)"$',
+    'info',
+    'Moved {old_path} to {path}',
+    [],
+    []
+))
 
 extractors.append(Extractor(
     'sftp_mkdir',
