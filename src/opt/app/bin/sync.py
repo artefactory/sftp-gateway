@@ -25,18 +25,12 @@ def main():
 
 
 def upload_file_to_buckets(file_path):
-    work_directory = tempfile.mkdtemp()
 
     log_labels = {'basename': os.path.basename(file_path), 'file': file_path}
-    working_copy = os.path.join(work_directory, os.path.basename(file_path))
-
-    log.info("Copying {} to {}".format(file_path, working_copy), **log_labels)
-    shutil.copy(file_path, working_copy)
 
     try:
         for bucket in config.APP_GCS_BUCKETS.split(','):
-            upload_file_to_bucket(working_copy, bucket, log_labels)
-
+            upload_file_to_bucket(file_path, bucket, log_labels)
         os.remove(file_path)
     except Exception as ex:
         error_destination = os.path.join(config.APP_LANDING_ERROR_DIR, os.path.basename(file_path))
@@ -44,8 +38,6 @@ def upload_file_to_buckets(file_path):
         log.exception(ex)
         log.error("Moving {} to error directory {}".format(file_path, error_destination), **log_labels)
         shutil.move(file_path, error_destination)
-
-    shutil.rmtree(work_directory)
 
 
 def upload_file_to_bucket(file_path, bucket, log_labels):
