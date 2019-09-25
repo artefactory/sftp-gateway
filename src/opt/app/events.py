@@ -1,11 +1,11 @@
-import time
-import config
-from Queue import Queue, Empty
-from threading import Thread
 import re
+import time
+from Queue import Empty, Queue
+from threading import Thread
+
+import config
 import log
 from parsers import parsers
-
 
 _event_handlers = {}
 
@@ -16,7 +16,7 @@ def register_event_handler(name, handler):
 
 
 def parse_process(process_str):
-    pattern = r'^(.+)\[(\d+)\]:$'
+    pattern = r"^(.+)\[(\d+)\]:$"
     match = re.match(pattern, process_str)
 
     if match:
@@ -24,7 +24,7 @@ def parse_process(process_str):
         pid = match.group(2)
 
         if pname not in parsers:
-            pname = 'default'
+            pname = "default"
         return pname, int(pid)
     else:
         return "default", -1
@@ -32,14 +32,14 @@ def parse_process(process_str):
 
 def parse_raw(raw_message):
     message = raw_message.strip()
-    timestamp, _, process, message = message.split(' ', 3)
+    timestamp, _, process, message = message.split(" ", 3)
     pname, pid = parse_process(process)
 
     messages = []
 
     for severity, message, labels in parsers[pname](pid, message):
-        labels['pid'] = pid
-        payload = {'severity': severity, 'message': message, 'timestamp': timestamp}
+        labels["pid"] = pid
+        payload = {"severity": severity, "message": message, "timestamp": timestamp}
 
         payload.update(labels)
         messages.append(payload)
@@ -49,7 +49,7 @@ def parse_raw(raw_message):
 
 def read_pipe(pipe, message_queue, parser):
 
-    log.info('Reading pipe {}'.format(pipe))
+    log.info("Reading pipe {}".format(pipe))
 
     worker = Thread(target=_read_pipe, args=(pipe, message_queue, parser))
     worker.setDaemon(True)
@@ -68,9 +68,9 @@ def _read_pipe(pipe, message_queue, parser):
 
                 try:
                     for event in parser(data):
-                        message_queue.put((event, None,))
+                        message_queue.put((event, None))
                 except Exception as ex:
-                    message_queue.put((None, ex,))
+                    message_queue.put((None, ex))
 
 
 def handle_events():

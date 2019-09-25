@@ -7,3 +7,5 @@ kube_generated/
 
 helm/nautilus-gcs-sftp-gateway/secrets
 helm/nautilus-gcs-sftp-gateway/values
+
+.vscode
