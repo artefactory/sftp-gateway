@@ -1,15 +1,15 @@
-import tempfile
-import shutil
-import os
+import copy
+import csv
 import glob
+import os
+import re
+import shutil
+import tempfile
+
 import command
 import config
-import csv
-import re
-import copy
-
-import reraise
 import log
+import reraise
 
 
 def main():
@@ -69,7 +69,7 @@ def upload_file_to_bucket(file_path, bucket, log_labels):
             reraise.reraise()
         finally:
             parse_report(transfer_log, _local_labels)
-    except Exception as ex:
+    except Exception:
         reraise.reraise()
     finally:
         shutil.rmtree(transfer_log_dir)
