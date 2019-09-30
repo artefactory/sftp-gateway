@@ -1,10 +1,11 @@
 import subprocess
-import log
+
+from loguru import logger
 
 
 def run(command, quiet=False):
 
-    log.debug("Running command {}".format(command))
+    logger.debug("Running command {}".format(command))
 
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -12,13 +13,15 @@ def run(command, quiet=False):
 
     if not quiet:
         for line in process.stdout:
-            log.info(line)
+            logger.info(line)
 
         for line in process.stderr:
-            log.error(line)
+            logger.error(line)
 
-    log.debug("Command returned exit code {}".format(process.returncode), exit_code=process.returncode)
-
+    logger.debug(
+        "Command returned exit code - {context}",
+        context={"exit_code": process.returncode, "command": command},
+    )
     if process.returncode != 0:
         raise Exception("Error running command: {}".format(command))
 

@@ -1,13 +1,15 @@
 import os
+
+from loguru import logger
+
 import config
-import log
 
 
 def populate_environment():
 
-    log.info("Populating environment file")
+    logger.info("Populating environment file")
 
-    with open(config.ENVIRONMENT_FILE, 'w') as handle:
+    with open(config.ENVIRONMENT_FILE, "w") as handle:
 
         handle.write("PYTHONPATH=/opt/app/\n")
 

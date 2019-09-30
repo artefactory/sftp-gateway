@@ -1,11 +1,13 @@
 import os
+
+from loguru import logger
+
 import config
-import log
 
 
 def set_landing_permissions():
 
-    log.info("Setting landing directory permissions")
+    logger.info("Setting landing directory permissions")
 
     for root, dirs, files in os.walk(config.APP_LANDING_DIR):
 
