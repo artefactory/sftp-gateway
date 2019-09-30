@@ -1,15 +1,13 @@
 # flake8: noqa
 
-from commands.start_cron import start_cron
-from commands.start_ssh_server import start_ssh_server
-from commands.start_rsyslog import start_rsyslog
-from commands.copy_ssh_host_keys import copy_ssh_host_keys
-from commands.set_landing_permissions import set_landing_permissions
-from commands.populate_environment import populate_environment
-from commands.create_authorized_key import create_authorized_key
-from commands.create_user import create_user
-from commands.create_sftp_config import create_sftp_config
-from commands.create_rsyslog_config import create_rsyslog_config
 from commands.configure_gcloud import configure_gcloud
+from commands.copy_ssh_host_keys import copy_ssh_host_keys
+from commands.create_authorized_key import create_authorized_key
 from commands.create_directories import create_directories
-from commands.move_uploaded import move_uploaded, move_existing
+from commands.create_sftp_config import create_sftp_config
+from commands.create_user import create_user
+from commands.populate_environment import populate_environment
+from commands.set_landing_permissions import set_landing_permissions
+from commands.start_ssh_server import start_ssh_server
+from commands.upload_file import upload_file
+from commands.watch_ingest_folder import move_existing, watch_ingest_folder

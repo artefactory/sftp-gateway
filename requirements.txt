@@ -1,3 +1,6 @@
 click
 python-dotenv[cli]
 pyyaml
+loguru
+pystache
+inotify-simple

@@ -1,30 +1,34 @@
 import click
-from yaml import dump
 from dotenv import dotenv_values
+from yaml import dump
 
 
 @click.command()
-@click.option('--env-file', required=True, type=click.File(mode='r'), help="Environment file")
-@click.option('--secrets-file', required=False, type=click.File(mode='r'), help="Secrets file")
+@click.option(
+    "--env-file", required=True, type=click.File(mode="r"), help="Environment file"
+)
+@click.option(
+    "--secrets-file", required=False, type=click.File(mode="r"), help="Secrets file"
+)
 def generate(env_file, secrets_file):
 
     values = dotenv_values(stream=env_file.name)
     yaml_values = {}
 
-    for key, value in values.iteritems():
+    for key, value in values.items():
         _set_value(yaml_values, key, value)
 
-    yaml_values['environment'] = {str(k): str(v) for k, v in values.iteritems()}
+    yaml_values["environment"] = {str(k): str(v) for k, v in values.items()}
 
     if secrets_file:
         secrets_values = dotenv_values(stream=secrets_file.name)
-        yaml_values['secrets'] = {str(k): str(v) for k, v in secrets_values.iteritems()}
+        yaml_values["secrets"] = {str(k): str(v) for k, v in secrets_values.items()}
 
-    print dump(yaml_values)
+    print(dump(yaml_values))
 
 
 def _set_value(values, key, value):
-    parts = list(reversed(key.split('_')))
+    parts = list(reversed(key.split("_")))
     stack = values
 
     while parts:
@@ -37,5 +41,5 @@ def _set_value(values, key, value):
             stack[lower_part] = str(value)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     generate()

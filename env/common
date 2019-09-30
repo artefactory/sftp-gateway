@@ -43,6 +43,8 @@ APP_SFTP_PORT=22
 APP_SFTP_UUID=9000
 APP_SFTP_GUID=9000
 
+SYSLOG_FACILITY=local6
+
 # A comma separated list of patterns to use to exclude files from uploading (uses POSX patterns, not regex)
 APP_LANDING_TEMP_PATTERNS=*.tmp
 
@@ -52,8 +54,3 @@ APP_LANDING_LOG_DEVICE=${APP_LANDING_DEV_DIR}/log
 APP_LANDING_INGEST_DIR=${APP_LANDING_DIR}/stage/ingest
 APP_LANDING_UPLOAD_DIR=${APP_LANDING_DIR}/.upload
 APP_LANDING_ERROR_DIR=${APP_LANDING_DIR}/stage/error
-
-# Internal logging setup
-APP_PIPE_DIR=/var/run/${APP_NAME}/pipes
-APP_RAW_LOG_PIPE=${APP_PIPE_DIR}/raw-messages
-APP_RAW_LOG_FACILITY=local6
