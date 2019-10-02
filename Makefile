@@ -48,7 +48,7 @@ docker_run: docker_build generate_config credentials
 						 --env-file ${ENV_FILE} \
 						 -v $$(pwd)/credentials/${environment}/files:${APP_SECRETS_DIR} \
 						 -p 3000:${APP_SFTP_PORT} \
-						 ${APP_DOCKER_IMAGE}
+						${APP_DOCKER_IMAGE}
 
 .PHONY: credentials
 credentials: create_ssh_key create_ssh_host_keys create_gcp_service_account_key
@@ -157,7 +157,7 @@ helm_debug: helm_generate_values
 
 .PHONY: helm_install
 helm_install: setup_kubernetes_access docker_publish helm_generate_values
-	count=$$(helm ls -q ${APP_NAME} | grep -c ${APP_NAME}); \
+	count=$$(helm ls -q ${APP_NAME} | grep -c "^${APP_NAME}$$"); \
 	if [ $${count} -eq 1 ]; then \
 		command="upgrade ${APP_NAME}"; \
 	else \

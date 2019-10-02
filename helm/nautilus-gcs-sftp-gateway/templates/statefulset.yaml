@@ -27,7 +27,7 @@ spec:
       - name: {{ .Values.app.name }}
         image: {{ .Values.app.docker.url }}
         imagePullPolicy: Always
-        command: ["python", "/opt/app/bin/launch.py"]
+        command: ["python3", "/opt/app/bin/launch.py"]
         envFrom:
         - configMapRef:
             name: {{ .Values.app.configmap.name }}

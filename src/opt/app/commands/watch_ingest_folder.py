@@ -26,4 +26,3 @@ def watch_ingest_folder():
         for event in events:
             path = os.path.join(config.APP_LANDING_INGEST_DIR, event.name)
             commands.upload_file(path)
-

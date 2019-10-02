@@ -1,11 +1,11 @@
 ENV=prod-manual
 
-K8S_CLUSTER_NAME=datalake-operations
-K8S_ZONE=europe-west1-b
+K8S_CLUSTER_NAME=sftp-gateway
+K8S_ZONE=europe-west3-a
 
 GCP_PROJECT_ID=***REMOVED***-datalake-prod
 
-APP_SERVICE_IP=35.205.242.238
+APP_SERVICE_IP=35.246.229.188
 
 APP_SFTP_USER=***REMOVED***
 APP_GCS_BUCKETS=***REMOVED***-datalake-manual-prod,***REMOVED***-datalake-manual-dev
