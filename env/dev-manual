@@ -1,11 +1,11 @@
 ENV=dev-manual
 
-K8S_CLUSTER_NAME=datalake-operations
-K8S_ZONE=europe-west1-b
+K8S_CLUSTER_NAME=sftp-gateway
+K8S_ZONE=europe-west3-a
 
 GCP_PROJECT_ID=datalakempx
 
-APP_SERVICE_IP=104.199.41.18
+APP_SERVICE_IP=34.89.193.229
 
 APP_SFTP_USER=monoprix
 APP_GCS_BUCKETS=monoprix-datalake-manual-dev

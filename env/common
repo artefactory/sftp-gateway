@@ -21,7 +21,7 @@ APP_SERVICE_INTERNAL=0
 # The name of the docker image
 APP_DOCKER_IMAGE=${APP_NAME}
 APP_DOCKER_REGISTRY=eu.gcr.io
-APP_DOCKER_TAG=1.1.11
+APP_DOCKER_TAG=2.0.0
 APP_DOCKER_URL=${APP_DOCKER_REGISTRY}/${GCP_PROJECT_ID}/${APP_DOCKER_IMAGE}:${APP_DOCKER_TAG}
 
 # The name of the GCP service account that will be created

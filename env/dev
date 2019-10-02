@@ -1,7 +1,7 @@
 ENV=dev
 
 K8S_CLUSTER_NAME=sftp-gateway
-K8S_ZONE=europe-west1-b
+K8S_ZONE=europe-west3-a
 
 GCP_PROJECT_ID=datalakempx
 
