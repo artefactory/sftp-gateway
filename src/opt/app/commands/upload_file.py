@@ -10,7 +10,7 @@ def upload_file(file_path):
     for bucket in buckets:
         upload_command = [
             "/usr/bin/gsutil",
-            "mv",
+            "cp",
             file_path,
             "gs://{}".format(bucket),
         ]
