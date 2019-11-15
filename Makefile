@@ -159,7 +159,7 @@ helm_debug: helm_generate_values
 helm_install: setup_kubernetes_access docker_publish helm_generate_values
 	count=$$(helm ls -q ${APP_NAME} | grep -c "^${APP_NAME}$$"); \
 	if [ $${count} -eq 1 ]; then \
-		command="upgrade ${APP_NAME}"; \
+		command="upgrade ${APP_NAME} --recreate-pods"; \
 	else \
 		command="install --name ${APP_NAME}"; \
 	fi; \
