@@ -43,7 +43,7 @@ APP_SFTP_PORT=22
 APP_SFTP_UUID=9000
 APP_SFTP_GUID=9000
 
-SYSLOG_FACILITY=local6
+SYSLOG_FACILITY=AUTH
 
 # A comma separated list of patterns to use to exclude files from uploading (uses POSX patterns, not regex)
 APP_LANDING_TEMP_PATTERNS=*.tmp

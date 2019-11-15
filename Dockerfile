@@ -20,8 +20,9 @@ RUN addgroup --gid $APP_SFTP_GUID sftp-users
 RUN mkdir -p $APP_SFTP_AUTHORIZEDKEYS_DIR && \
     mkdir -p /run/sshd && \
     mkdir -p $APP_LANDING_DIR && \
-    mkdir -p /var/run/sshd  && \
-    rm -rf /var/log/*
+    mkdir -p /var/run/sshd
+
+RUN echo "*.* /var/log/sshd/sshd.log" >> /etc/syslog.conf
 
 ADD ./src/opt/requirements.txt /opt/requirements.txt
 
