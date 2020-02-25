@@ -1,3 +1,0 @@
-apiVersion: v1
-name: nautilus-gcs-sftp-gateway
-version: 1.0.1
