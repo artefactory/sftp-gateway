@@ -17,4 +17,5 @@ def create_directories():
 
 def safe_make_dir(path):
     if not os.path.isdir(path):
+        logger.info(f"Directory created : {path}")
         os.makedirs(path)

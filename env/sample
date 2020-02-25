@@ -2,15 +2,18 @@
 # The name of the environment, must be the same name as the file
 ENV=sample
 
+
 # The name and zone of your GKE K8S cluster
+# Don't include this part for local development
 K8S_CLUSTER_NAME=sftp-gateway
 K8S_ZONE=<INSERT_GKE_CLUSTER_ZONE (ex: europe-west1-b)>
+K8S_REGION=<INSERT_GKE_CLUSTER_REGION (ex: europe-west1)>
+# When using K8S, this will be the IP Address of the LoadBalancer service
+APP_SERVICE_IP=<INSERT_STATIC_IPv4_ADDRESS_HERE (ex: 35.45.187.4)>
+
 
 # The name of the GCP Project
 GCP_PROJECT_ID=<INSERT_GCP_PROJECT_ID_HERE>
-
-# When using K8S, this will be the IP Address of the LoadBalancer service
-APP_SERVICE_IP=<INSERT_STATIC_IPv4_ADDRESS_HERE (ex: 127.0.0.1)>
 
 # The username that will be allowed to connect to the SFTP server
 APP_SFTP_USER=<INSERT_USERNAME_HERE>
