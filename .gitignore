@@ -6,8 +6,8 @@ kube_generated/
 
 **/*.pyc
 
-helm/nautilus-gcs-sftp-gateway/secrets/*
-helm/nautilus-gcs-sftp-gateway/values*
+helm/nautilus-sftp-gateway/secrets/*
+helm/nautilus-sftp-gateway/values.yaml
 
 .vscode
 

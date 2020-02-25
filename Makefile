@@ -130,16 +130,16 @@ $(MK_GENERATED_CONFIG): env/${environment} env/common
 	ENV=${environment} ./bin/configure.sh
 
 
-MK_HELM_CONFIG = helm/nautilus-gcs-sftp-gateway/values/${environment}.yaml
-MK_HELM_SECRETS = helm/nautilus-gcs-sftp-gateway/secrets/${environment}
+MK_HELM_CONFIG = helm/nautilus-sftp-gateway/values/${environment}.yaml
+MK_HELM_SECRETS = helm/nautilus-sftp-gateway/secrets/${environment}
 
 .PHONY: helm_generate_values
 helm_generate_values: $(MK_HELM_CONFIG) credentials
 
-helm/nautilus-gcs-sftp-gateway/values:
-	mkdir -p helm/nautilus-gcs-sftp-gateway/values
+helm/nautilus-sftp-gateway/values:
+	mkdir -p helm/nautilus-sftp-gateway/values
 
-$(MK_HELM_CONFIG): $(MK_GENERATED_CONFIG) $(MK_CREDENTIALS_FILES) helm/nautilus-gcs-sftp-gateway/values
+$(MK_HELM_CONFIG): $(MK_GENERATED_CONFIG) $(MK_CREDENTIALS_FILES) helm/nautilus-sftp-gateway/values
 	rm -rf $(MK_HELM_SECRETS)
 	mkdir -p $(MK_HELM_SECRETS)
 	cp $(MK_CREDENTIALS_FILES) $(MK_HELM_SECRETS)
@@ -153,7 +153,7 @@ helm_setup:
 
 .PHONY: helm_debug
 helm_debug: helm_generate_values
-	helm install --dry-run --debug --set gcloud.user=${GCLOUD_USER} -f helm/nautilus-gcs-sftp-gateway/values/${environment}.yaml ./helm/nautilus-gcs-sftp-gateway
+	helm install --dry-run --debug --set gcloud.user=${GCLOUD_USER} -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
 
 .PHONY: helm_install
 helm_install: setup_kubernetes_access docker_publish helm_generate_values
@@ -163,7 +163,7 @@ helm_install: setup_kubernetes_access docker_publish helm_generate_values
 	else \
 		command="install --name ${APP_NAME}"; \
 	fi; \
-	helm $${command} --set gcloud.user=${GCLOUD_USER} -f helm/nautilus-gcs-sftp-gateway/values/${environment}.yaml ./helm/nautilus-gcs-sftp-gateway
+	helm $${command} --set gcloud.user=${GCLOUD_USER} -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
 
 
 .PHONY: setup_kubernetes_access

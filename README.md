@@ -1,4 +1,4 @@
-# nautilus-gcs-sftp-gateway
+# nautilus-sftp-gateway
 
 This is a Docker image containing an SSH server and a gsutil rsync script, allowing to create a SFTP-to-GCS gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS.
 
@@ -52,13 +52,13 @@ In order for the service to run, you need to generate/provide various credential
 - SSH Host keys, the server's identity keys
 
 #### Vanilla Docker
-If you're using vanilla Docker, a directory containing the above secret files should be mounted onto the container to the path configured by `$APP_SECRETS_DIR` (by default, `/var/run/secrets/nautilus-gcs-sftp-gateway-${ENV}`).
+If you're using vanilla Docker, a directory containing the above secret files should be mounted onto the container to the path configured by `$APP_SECRETS_DIR` (by default, `/var/run/secrets/nautilus-sftp-gateway-${ENV}`).
 
 #### Kubernetes
 If you're using Kubernetes, the credentials should be provided through mounted secrets volume. It's recommended to use the provided Helm Chart to handle all of the specfile generation and deployment. See the Helm section below for more info.
 
 #### GCP Service Account
-Your container will need a GCP Service Account in order to write to GCS buckets; the service account key file should be provided as a secret to the container with the name defined by `$GCP_SERVICEACCOUNT_KEY_NAME` (by default, `nautilus-gcs-sftp-gateway-${ENV}-sa-key.key`)
+Your container will need a GCP Service Account in order to write to GCS buckets; the service account key file should be provided as a secret to the container with the name defined by `$GCP_SERVICEACCOUNT_KEY_NAME` (by default, `nautilus-sftp-gateway-${ENV}-sa-key.key`)
 
 You can generate your own manually through the [GCP UI](https://cloud.google.com/iam/docs/creating-managing-service-account-keys), or by running the following command:
 
