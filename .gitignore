@@ -8,6 +8,11 @@ kube_generated/
 
 helm/nautilus-sftp-gateway/secrets/*
 helm/nautilus-sftp-gateway/values.yaml
+helm/nautilus-sftp-gateway/values/*
+
+env/*
+!env/common
+!env/sample
 
 .vscode
 
