@@ -1,3 +1,5 @@
+$(info ENV="$(ENV)")
+
 # Load config values
 ifndef ENV
 	environment = dev
@@ -47,7 +49,7 @@ docker_run: docker_build generate_config credentials
 						 --rm \
 						 --env-file ${ENV_FILE} \
 						 -v $$(pwd)/credentials/${environment}/files:${APP_SECRETS_DIR} \
-						 -p 3000:${APP_SFTP_PORT} \
+						 -p ${APP_HOST_PORT}:${APP_SFTP_PORT} \
 						${APP_DOCKER_IMAGE}
 
 .PHONY: credentials
@@ -59,6 +61,7 @@ create_gcp_service_account:
 	if [ $$service_account_exists -ne 1 ] ; \
 	then \
 		gcloud --project ${GCP_PROJECT_ID} iam service-accounts create ${GCP_SERVICEACCOUNT_NAME} --display-name ${GCP_SERVICEACCOUNT_NAME} ; \
+		gcloud projects add-iam-policy-binding ${GCP_PROJECT_ID} --member serviceAccount:${GCP_SERVICEACCOUNT_IAM} --role roles/storage.objectAdmin ; \
 	fi
 
 GCP_SERVICEACCOUNT_KEY_NAME ?= dummy-service-account

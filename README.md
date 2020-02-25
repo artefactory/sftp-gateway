@@ -36,7 +36,7 @@ The container does not contain any credentials, they must be provided at deploym
 ## Usage
 
 ### Configuration
-All of the configuration is managed through the environment files stored in the `./env` directory. There is a `common` environment file that contains the majority of the configuration directives, and typically doesn't need to be changed. You can then create additional configuration files for different environments/clients, such as `dev`, `prod`, or `***REMOVED***`.
+All of the configuration is managed through the environment files stored in the `./env` directory. There is a `common` environment file that contains the majority of the configuration directives, and typically doesn't need to be changed. You can then create additional configuration files for different environments/clients, such as `dev` or `prod` for example.
 
 The environment variables specified in the environment files override the values defined in the `common` file during processing.
 
@@ -82,7 +82,7 @@ The keys will be placed in `./credentials/<your-env-name>/files/`.
 #### SSH Host Keys (Optional)
 When you connect to an SFTP server, before verifying your identity it sends you a unique signature that identifies the server. This signature is typically stored by SFTP clients to verify the identity of the server the next time you connect.
 
-As the docker containers are emphemeral, different instances of the image will have different host keys, which can cause SFTP clients to complain with the following error:
+As the docker containers are ephemeral, different instances of the image will have different host keys, which can cause SFTP clients to complain with the following error:
 
 ```
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -142,33 +142,31 @@ ENV=your-env-name make generate_config
 
 This will output a resolved config file to `./config/<your-env-name>`.
 
+You can load these configurations using the following command :
+```shell
+source ./config/${ENV}
+```
+
 You can run the docker image with:
 
 ```shell
 docker run --rm -it --env-file ./config/${ENV} \
-                    -v ./credentials/${ENV}/files:$APP_SECRETS_DIR \
-                    -p ${HOST_PORT}:${APP_SFTP_PORT} \
+                    -v $(pwd)/credentials/${ENV}/files:${APP_SECRETS_DIR} \
+                    -p ${APP_HOST_PORT}:${APP_SFTP_PORT} \
                     ${APP_DOCKER_IMAGE}
 ```
 
-Where `HOST_PORT` is the port on the host machine to which docker should bind (probably not 22, since you might already have an SSH service), `ENV` is the name of your environment, and the `APP_*` variables are the values taken from `./config/<your-env-name>`.
+Where `APP_HOST_PORT` is the port on the host machine to which docker should bind (probably not 22, since you might already have an SSH service), `ENV` is the name of your environment, and the `APP_*` variables are the values taken from `./config/<your-env-name>`.
 
-### Deploying to GKE
-The project contains a Helm Chart that can deploy the service to a Kubernetes cluster.
 
-You can setup Helm on your cluster, if not already done, by running:
-
+To connect to the docker container, you can use docker exec into the container using the following command :
 ```shell
-make helm_setup
+docker exec -it $(docker ps | grep ${APP_DOCKER_IMAGE} | tr -s " " | cut -d " " -f 1) /bin/sh
 ```
-
-Once that's done, you can just run:
-
+or you can use the SFTP command to connect to the local SFTP server :
+```shell
+sftp -P ${APP_HOST_PORT} -i $(pwd)/credentials/${ENV}/files/${APP_SFTP_PRIVATEKEY_NAME} ${APP_SFTP_USER}@0.0.0.0:stage/ingest/
 ```
-ENV=your-env-name make helm_install
-```
-
-This will automatically pick up any changes made to the relevant files in `./env` and `./credentials`, regenerate config, generate the approriate `values.yaml` file for Helm, and deploy the changes to your Kubernetes cluster.
 
 
 #### Generating a fixed IP address
@@ -176,8 +174,33 @@ This will automatically pick up any changes made to the relevant files in `./env
 In order to expose the SFTP server, you need to reserve a static IP address that will be used by Kubernetes. The IP address needs to be in the same zone as the Kubernetes cluster.
 
 ```
-gcloud compute addresses create [ADDRESS_NAME] --region [KUBE_ZONE] --ip-version IPV4
+gcloud compute addresses create ${APP_NAME}-ip --region ${K8S_REGION} --ip-version IPV4
 ```
+
+
+### Deploying to GKE
+The project contains a Helm Chart that can deploy the service to a Kubernetes cluster.
+
+First connect kubectl to the Kubernetes cluster by using the following command :
+```shell
+ENV=your-env-name make setup_kubernetes_access
+```
+
+
+You can setup Helm on your cluster, if not already done, by running:
+
+```shell
+ENV=your-env-name make helm_setup
+```
+
+Once that's done, you can just run:
+
+```shell
+ENV=your-env-name make helm_install
+```
+
+This will automatically pick up any changes made to the relevant files in `./env` and `./credentials`, regenerate config, generate the approriate `values.yaml` file for Helm, and deploy the changes to your Kubernetes cluster.
+
 
 ### Connecting to the SFTP server
 
