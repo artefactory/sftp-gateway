@@ -49,7 +49,6 @@ jobs:
         curl -X POST -F repo_name=${{ github.repository }} -F badge_name=complexity -F value=$rad https://vial-dot-data-sandbox-196216.appspot.com/build_badge 
     - name: Get leaks from gitleaks
       run: |
-        curl https://raw.githubusercontent.com/zricethezav/gitleaks/master/examples/leaky-repo.toml >> gitleaks.toml
         leaks=`docker run --rm --name gitleaks -v $(pwd):/code/ zricethezav/gitleaks --repo-path=/code/ -v --config=/code/gitleaks.toml | grep 'leaks detected' | awk '{print $2}'`
         if [[ $leaks -eq "No" ]]; then leaks="0"; fi
         rm gitleaks.toml
