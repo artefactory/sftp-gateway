@@ -1,80 +1,135 @@
-import commands
-import glob
+"""Summary
+"""
+from typing import List
+
 import os
 
+from commands.upload_file import upload_file
 from inotify_simple import INotify, flags, Event
 from loguru import logger
 
 import config
 
 
-inotify = INotify()
-watched_flags = flags.CREATE | flags.MOVED_TO | flags.ISDIR
-directories = {}
-wds = {}
+class FileWatcher:
 
+    """Summary
 
-def move_existing():
-    logger.info("Moving existing files")
-    existing_files = glob.glob(os.path.join(config.APP_LANDING_INGEST_DIR, "*"))
+    Attributes:
+        directories (dict): Description
+        inotify (INotify): Description
+        watch_descriptors (dict): Description
+        watched_flags (int): Description
+    """
 
-    for f in existing_files:
-        commands.upload_file(f)
+    def __init__(self):
+        """Summary
+        """
+        self.inotify = INotify()
+        self.watched_flags = flags.CREATE | flags.MOVED_TO | flags.ISDIR
+        self.directories = {}
+        self.watch_descriptors = {}
+        watch_descriptor = self.inotify.add_watch(config.APP_LANDING_INGEST_DIR, self.watched_flags)
+        self.directories[watch_descriptor] = config.APP_LANDING_INGEST_DIR
+        self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
+        logger.info("Watching ingestion folder")
 
+        while True:
+            events = self.inotify.read(read_delay=1000)
+            all_events = self.get_all_events(events)
+            for event in all_events:
+                path = os.path.join(self.directories[event.wd], event.name)
+                upload_file(path)
+                os.remove(path)
+            self.delete_folders_if_empty(config.APP_LANDING_INGEST_DIR)
 
-def delete_folders_if_empty(dirname):
-    for root, dirs, files in os.walk(dirname, topdown=False):
-        for name in dirs:
-            dir_path = os.path.join(root, name)
-            if not os.listdir(dir_path):  # An empty list is False
-                inotify.rm_watch(wds[os.path.join(root, name)])
-                del directories[wds[os.path.join(root, name)]]
-                del wds[os.path.join(root, name)]
-                os.rmdir(os.path.join(root, name))
+    def delete_folders_if_empty(self, dirname: str):
+        """Summary
 
+        Args:
+            dirname (str): Description
+        """
+        for root, dirs, _ in os.walk(dirname, topdown=False):
+            for name in dirs:
+                dir_path = os.path.join(root, name)
+                if not os.listdir(dir_path):  # An empty list is False
+                    self.inotify.rm_watch(self.watch_descriptors[os.path.join(root, name)])
+                    del self.directories[self.watch_descriptors[os.path.join(root, name)]]
+                    del self.watch_descriptors[os.path.join(root, name)]
+                    os.rmdir(os.path.join(root, name))
 
-def get_all_events(events):
-    logger.info(f"Initial events: {events}")
-    all_events = []
-    for event in events:
-        is_dir = False
-        deleted = False
-        for flag in flags.from_mask(event.mask):
-            if flag == flag.ISDIR:
-                is_dir = True
-            if flag == flag.DELETE or flag == flag.IGNORED:
-                deleted = True
-        if is_dir and not deleted:
-            wd = inotify.add_watch(os.path.join(config.APP_LANDING_INGEST_DIR, event.name), watched_flags)
-            directories[wd] = os.path.join(config.APP_LANDING_INGEST_DIR, event.name)
-            wds[directories[wd]] = wd
-            for root, folders, files in os.walk(directories[wd]):
-                for folder in folders:
-                    wd = inotify.add_watch(os.path.join(root, folder), watched_flags)
-                    directories[wd] = os.path.join(root, folder)
-                    wds[directories[wd]] = wd
-                for file in files:
-                    all_events += [Event(wd=wds[root], mask=256, cookie=0, name=file)]
-                    logger.info(f"Adding untracked event for file : {root}/{file}")
-        elif not deleted:
-            all_events += [event]
-            logger.info(f"Adding event for file : {directories[event.wd]}/{event.name}")
-        else:
-            continue
-    logger.info(f"All events : {all_events}")
-    return all_events
+    def get_all_events(self, events: List[Event]):
+        """Summary
+
+        Args:
+            events (List[Event]): Description
+
+        Returns:
+            List[Event]: Description
+        """
+        logger.info(f"Initial events: {events}")
+        all_events = []
+        for event in events:
+            is_dir = False
+            deleted = False
+            for flag in flags.from_mask(event.mask):
+                if flag == flag.ISDIR:
+                    is_dir = True
+                if flag in (flag.DELETE, flag.IGNORED):
+                    deleted = True
+            if is_dir and not deleted:
+                watch_descriptor = self.inotify.add_watch(
+                    os.path.join(config.APP_LANDING_INGEST_DIR, event.name),
+                    self.watched_flags
+                )
+                self.directories[watch_descriptor] = os.path.join(
+                    config.APP_LANDING_INGEST_DIR,
+                    event.name
+                )
+                self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
+                all_events = self.check_subfolders(watch_descriptor, all_events)
+            elif not deleted:
+                all_events += [event]
+                logger.info(
+                    f"Adding event for file : "
+                    f"{self.directories[event.wd]}/{event.name}"
+                )
+            else:
+                continue
+        logger.info(f"All events : {all_events}")
+        return all_events
+
+    def check_subfolders(self, watch_descriptor: int, all_events: List[Event]):
+        """Summary
+
+        Args:
+            watch_descriptor (int): Description
+            all_events (List[Event]): Description
+
+        Returns:
+            List[Event]: Description
+        """
+        for root, folders, files in os.walk(self.directories[watch_descriptor]):
+            for folder in folders:
+                watch_descriptor = self.inotify.add_watch(
+                    os.path.join(root, folder),
+                    self.watched_flags
+                )
+                self.directories[watch_descriptor] = os.path.join(root, folder)
+                self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
+            for file in files:
+                all_events += [
+                    Event(
+                        wd=self.watch_descriptors[root],
+                        mask=256,
+                        cookie=0,
+                        name=file)
+                ]
+                logger.info(f"Adding untracked event for file : {root}/{file}")
+        return all_events
 
 
 def watch_ingest_folder():
-    logger.info("Watching ingestion folder")
-    wd = inotify.add_watch(config.APP_LANDING_INGEST_DIR, watched_flags)
-    directories[wd] = config.APP_LANDING_INGEST_DIR
-    wds[directories[wd]] = wd
-    while True:
-        events = inotify.read(read_delay=1000)
-        all_events = get_all_events(events)
-        for event in all_events:
-            path = os.path.join(directories[event.wd], event.name)
-            commands.upload_file(path)
-            os.remove(path)
-        delete_folders_if_empty(config.APP_LANDING_INGEST_DIR)
+    """Summary
+    """
+    FileWatcher()

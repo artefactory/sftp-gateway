@@ -1,8 +1,12 @@
+"""Summary
+"""
+from typing import Dict
 import click
 from dotenv import dotenv_values
 from yaml import dump
 
 
+# pylint: disable=no-value-for-parameter
 @click.command()
 @click.option(
     "--env-file", required=True, type=click.File(mode="r"), help="Environment file"
@@ -10,8 +14,13 @@ from yaml import dump
 @click.option(
     "--secrets-file", required=False, type=click.File(mode="r"), help="Secrets file"
 )
-def generate(env_file, secrets_file):
+def generate(env_file: click.File, secrets_file: click.File):
+    """Summary
 
+    Args:
+        env_file (click.File): Description
+        secrets_file (click.File): Description
+    """
     values = dotenv_values(stream=env_file.name)
     yaml_values = {}
 
@@ -27,14 +36,21 @@ def generate(env_file, secrets_file):
     print(dump(yaml_values))
 
 
-def _set_value(values, key, value):
+def _set_value(values: Dict[str, str], key: str, value: str):
+    """Summary
+
+    Args:
+        values (Dict[str, str]): Description
+        key (str): Description
+        value (str): Description
+    """
     parts = list(reversed(key.split("_")))
     stack = values
 
     while parts:
         part = parts.pop()
         lower_part = str(part.lower())
-        if len(parts) > 0:
+        if parts:
             stack[lower_part] = stack.get(lower_part, {})
             stack = stack.get(lower_part, {})
         else:

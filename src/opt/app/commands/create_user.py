@@ -1,3 +1,5 @@
+"""Summary
+"""
 import binascii
 import os
 
@@ -8,7 +10,11 @@ import config
 
 
 def create_user():
+    """Summary
 
+    Raises:
+        Exception: Description
+    """
     logger.info("Creating user")
 
     if config.APP_SFTP_USER in config.FORBIDDEN_USERNAMES:
@@ -31,4 +37,9 @@ def create_user():
 
 
 def generate_pass():
+    """Summary
+
+    Returns:
+        str: Description
+    """
     return binascii.hexlify(os.urandom(16)).decode()

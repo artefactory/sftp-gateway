@@ -1,3 +1,5 @@
+"""Summary
+"""
 from loguru import logger
 
 import command
@@ -5,7 +7,8 @@ import config
 
 
 def configure_gcloud():
-
+    """Summary
+    """
     logger.info("Configuring gcloud")
 
     auth = [

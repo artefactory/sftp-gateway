@@ -1,11 +1,13 @@
+"""Summary
+"""
 from loguru import logger
-
-import config
 import pystache
+import config
 
 
 def create_sftp_config():
-
+    """Summary
+    """
     logger.info("Configuring SFTP Config")
 
     renderer = pystache.Renderer()
@@ -20,5 +22,5 @@ def create_sftp_config():
 
     render_config = renderer.render_path(config.get_template("sshd_config"), context)
 
-    with open(config.SSHD_CONFIG_FILE, "w") as h:
-        h.write(render_config)
+    with open(config.SSHD_CONFIG_FILE, "w") as config_file:
+        config_file.write(render_config)

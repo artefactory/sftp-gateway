@@ -1,3 +1,5 @@
+"""Summary
+"""
 import os
 
 from loguru import logger
@@ -6,7 +8,8 @@ import config
 
 
 def create_authorized_key():
-
+    """Summary
+    """
     logger.info("Creating authorized key")
 
     with open(config.APP_SFTP_AUTHORIZEDKEYS_KEYPATH, 'w') as handle:
@@ -14,4 +17,8 @@ def create_authorized_key():
             handle.write(reader.read())
 
     os.chmod(config.APP_SFTP_AUTHORIZEDKEYS_KEYPATH, 0o644)
-    os.chown(config.APP_SFTP_AUTHORIZEDKEYS_KEYPATH, int(config.APP_SFTP_UUID), int(config.APP_SFTP_GUID))
+    os.chown(
+        config.APP_SFTP_AUTHORIZEDKEYS_KEYPATH,
+        int(config.APP_SFTP_UUID),
+        int(config.APP_SFTP_GUID)
+    )

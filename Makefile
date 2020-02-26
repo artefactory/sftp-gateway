@@ -146,7 +146,7 @@ $(MK_HELM_CONFIG): $(MK_GENERATED_CONFIG) $(MK_CREDENTIALS_FILES) helm/nautilus-
 	rm -rf $(MK_HELM_SECRETS)
 	mkdir -p $(MK_HELM_SECRETS)
 	cp $(MK_CREDENTIALS_FILES) $(MK_HELM_SECRETS)
-	python ./bin/env-to-values.py --env-file $(MK_GENERATED_CONFIG) > $(MK_HELM_CONFIG)
+	python ./bin/env_to_values.py --env-file $(MK_GENERATED_CONFIG) > $(MK_HELM_CONFIG)
 
 
 .PHONY: helm_setup

@@ -1,3 +1,5 @@
+"""Summary
+"""
 import glob
 import os
 import shutil
@@ -9,7 +11,8 @@ import config
 
 
 def copy_ssh_host_keys():
-
+    """Summary
+    """
     logger.info("Copying SSH Host keys")
 
     path = os.path.join(config.APP_SECRETS_DIR, "ssh_host*")

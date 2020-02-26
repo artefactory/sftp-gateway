@@ -1,10 +1,23 @@
+"""Summary
+"""
 import subprocess
 
 from loguru import logger
 
 
-def run(command, quiet=False):
+def run(command: str, quiet: bool = False):
+    """Summary
 
+    Args:
+        command (str): Description
+        quiet (bool, optional): Description
+
+    Returns:
+        int: Description
+
+    Raises:
+        Exception: Description
+    """
     logger.debug("Running command {}".format(command))
 
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

@@ -1,3 +1,5 @@
+"""Summary
+"""
 import os
 
 from loguru import logger
@@ -6,7 +8,8 @@ import config
 
 
 def populate_environment():
-
+    """Summary
+    """
     logger.info("Populating environment file")
 
     with open(config.ENVIRONMENT_FILE, "w") as handle:
