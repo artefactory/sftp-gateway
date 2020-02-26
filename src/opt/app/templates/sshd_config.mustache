@@ -40,12 +40,12 @@ ChrootDirectory {{landing_directory}}
 
 AuthenticationMethods publickey
 
-ForceCommand internal-sftp -l VERBOSE -f {{syslog_facility}} -p open,close,read,write,lstat,fstat,opendir,readdir,realpath,stat,rename,posix-rename
+ForceCommand internal-sftp -l VERBOSE -f {{syslog_facility}} -d "{{landing_directory}}/stage/ingest" -p open,close,read,write,lstat,fstat,setstat,opendir,readdir,mkdir,rmdir,realpath,stat,rename,posix-rename
 
 AcceptEnv LANG LC_*
 
 # override default of no subsystems
 #Subsystem	sftp	/usr/lib/openssh/sftp-server -l INFO -f {{syslog_facility}}
-Subsystem sftp internal-sftp -l VERBOSE -f {{syslog_facility}} -p open,close,read,write,lstat,fstat,opendir,readdir,realpath,stat,rename,posix-rename
+Subsystem sftp internal-sftp -l VERBOSE -f {{syslog_facility}} -d "{{landing_directory}}/stage/ingest" -p open,close,read,write,lstat,fstat,setstat,opendir,readdir,mkdir,rmdir,realpath,stat,rename,posix-rename
 
 AllowUsers {{user}}
