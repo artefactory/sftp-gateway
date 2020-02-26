@@ -1,5 +1,11 @@
 # nautilus-sftp-gateway
 
+![](https://vial-dot-data-sandbox-196216.appspot.com/get_badge/4d29c65d5f4d21f543ea2389e29fc7bcb621e7ef649ce070e6a47c1b5fbb86e9)
+![](https://vial-dot-data-sandbox-196216.appspot.com/get_badge/31b1704918e14bb03933a6068e18a8afc09d725ceefc0e78a06267c65ccd07c2)
+![](https://vial-dot-data-sandbox-196216.appspot.com/get_badge/0bc8e88d64bc4046cb18d70e0321de06405a51c8c889e7d8b903599b740a205f)
+![](https://vial-dot-data-sandbox-196216.appspot.com/get_badge/52471cb3ec0b885cd51803a988f2c01df7a6d054f1398efd1d052f3967667230)
+
+
 This is a Docker image containing an SSH server and a gsutil rsync script, allowing to create a SFTP-to-GCS gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS.
 
 The repository contains the appropriate files to deploy the container to Kubernetes.
