@@ -6,7 +6,7 @@
 ![](https://vial-dot-data-sandbox-196216.appspot.com/get_badge/52471cb3ec0b885cd51803a988f2c01df7a6d054f1398efd1d052f3967667230)
 
 
-This is a Docker image containing an SSH server and a gsutil rsync script, allowing to create a SFTP-to-GCS gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS.
+This is a Docker image containing a SSH server and an INotify daemon allowing to create a SFTP-to-GCS gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS.
 
 The repository contains the appropriate files to deploy the container to Kubernetes.
 
