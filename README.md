@@ -7,6 +7,11 @@
 ![](https://vial-dot-data-sandbox-196216.appspot.com/get_badge/52471cb3ec0b885cd51803a988f2c01df7a6d054f1398efd1d052f3967667230)
 
 
+## Architecture
+
+![Nautilus SFTP Gateway architecture](./docs/Nautilus_SFTP_Gateway_architecture.png)
+
+
 This is a Docker image containing a SSH server and an INotify daemon allowing to create a SFTP-to-GCS gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS.
 
 The repository contains the appropriate files to deploy the container to Kubernetes.
