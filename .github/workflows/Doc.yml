@@ -24,7 +24,7 @@ on:
 
 
 jobs:
-  build:
+  build_badge_and_update_doc:
 
     runs-on: ubuntu-latest
     strategy:
