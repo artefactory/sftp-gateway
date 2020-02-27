@@ -81,7 +81,7 @@ jobs:
         persist-credentials: true
     - name: Update Wiki
       run : |
-        cat README.md > ./docs/Home.md
+        sed -r "s/\.\/docs\/(.*)\.md/\.\/\1/g" README.md > ./docs/Home.md
         rm -f ./nautilus-sftp-gateway.wiki/*.md
         cp -r ./docs/ ./nautilus-sftp-gateway.wiki/
         cd nautilus-sftp-gateway.wiki/
