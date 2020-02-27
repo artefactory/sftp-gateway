@@ -88,8 +88,8 @@ jobs:
         git config --global user.email "actions@github.com"
         git config --global user.name "GitHub-Actions"
         git add *
-        git commit -m "[DOC] Updated wiki from GitHub actions"
-        git push
+        git diff-index --quiet HEAD || git commit -m "[DOC] Updated wiki from GitHub actions"
+        git diff-index --quiet HEAD || git push
         cd ..
         rm -rf nautilus-sftp-gateway.wiki/
 
