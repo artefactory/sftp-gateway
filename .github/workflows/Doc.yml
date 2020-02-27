@@ -89,7 +89,7 @@ jobs:
         git config --global user.name "GitHub-Actions"
         git add *
         git diff-index --quiet HEAD || git commit -m "[DOC] Updated wiki from GitHub actions"
-        git diff-index --quiet HEAD || git push
+        git push
         cd ..
         rm -rf nautilus-sftp-gateway.wiki/
 
