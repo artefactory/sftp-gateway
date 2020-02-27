@@ -15,17 +15,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-name: CI
+name: Doc
 
 on:
   push:
     branches:
     - master
-    - develop
-  pull_request:
-    branches:
-    - master
-    - develop
 
 
 jobs:
@@ -54,22 +49,47 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+    - name: Test with pytest, upload coverage.
       run: |
         pip install pytest-cov webtest
-        pytest --cov=./src/opt/app
+        cov=`pytest --cov=./src/opt/app | grep TOTAL | awk '{print $4}'`
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=coverage -F value=$cov https://vial-dot-data-sandbox-196216.appspot.com/build_badge
       env:
         PYTHONPATH: /home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway/src/opt/app
-    - name: Run pylint
+    - name: Get pylint note
       run: |
         pip install pylint
-        pylint $(pwd)/**/*.py --disable=no-member
+        pl=`pylint $(pwd)/**/*.py --disable=no-member | grep "Your code has been rated at " | awk '{print $7}'`
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=pylint -F value=$pl https://vial-dot-data-sandbox-196216.appspot.com/build_badge
       env:
         PYTHONPATH: /home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway
-    - name: Run radon cyclomatic complexity
+    - name: Get cyclomatic complexity
       run: |
         pip install radon
-        radon cc --average .
+        rad=`radon cc --average . | tail -1 | awk '{print $3}'`
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=complexity -F value=$rad https://vial-dot-data-sandbox-196216.appspot.com/build_badge 
     - name: Get leaks from gitleaks
       run: |
-        docker run --rm --name gitleaks -v $(pwd):/code/ zricethezav/gitleaks --repo-path=/code/ --config=/code/gitleaks.toml
+        leaks=`docker run --rm --name gitleaks -v $(pwd):/code/ zricethezav/gitleaks --repo-path=/code/ -v --config=/code/gitleaks.toml | grep 'leaks detected' | awk '{print $2}'`
+        if [[ $leaks -eq "No" ]]; then leaks="0"; fi
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=gitleaks -F value=$leaks https://vial-dot-data-sandbox-196216.appspot.com/build_badge
+    - name: Checkout Wiki
+      uses: actions/checkout@v2
+      with:
+        repository: artefactory/nautilus-sftp-gateway.wiki.git
+        path: nautilus-sftp-gateway.wiki/
+        persist-credentials: true
+    - name: Update Wiki
+      run : |
+        sed "s/\.\/docs\//\.\//g" README.md > ./docs/Home.md
+        rm -f ./nautilus-sftp-gateway.wiki/*.md
+        cp -r ./docs/ ./nautilus-sftp-gateway.wiki/
+        cd nautilus-sftp-gateway.wiki/
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub-Actions"
+        git add *
+        git commit -m "[DOC] Updated wiki from GitHub actions"
+        git push
+        cd ..
+        rm -rf nautilus-sftp-gateway.wiki/
+

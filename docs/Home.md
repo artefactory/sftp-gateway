@@ -28,7 +28,7 @@ The container does not contain any credentials, they must be provided at deploym
 
 ### Installation
 
-See [`Installing the dependancies`](./docs/Install.md)
+See [`Installing the dependancies`](./Install.md)
 
 
 ### Configuration
@@ -43,23 +43,23 @@ You can read the `common` and `sample` files in `./env` to understand what the c
 #### Credentials
 In order for the service to run, you need to generate/provide various credential files:
 
-- [GCP Service Account key file, to grant the image the right to upload files to a GCS bucket](./docs/GCS.md)
-- [SSH Public key file, the public par of the public-private key used to connect to the SFTP server](./docs/SFTP.md)
-- [SSH Host keys, the server's identity keys](./docs/SFTP.md)
+- [GCP Service Account key file, to grant the image the right to upload files to a GCS bucket](./GCS.md)
+- [SSH Public key file, the public par of the public-private key used to connect to the SFTP server](./SFTP.md)
+- [SSH Host keys, the server's identity keys](./SFTP.md)
 
 #### Vanilla Docker
 If you're using vanilla Docker, a directory containing the above secret files should be mounted onto the container to the path configured by `$APP_SECRETS_DIR` (by default, `/var/run/secrets/nautilus-sftp-gateway-${ENV}`).
 
-See [`Configuring with docker image`](./docs/Docker.md)
+See [`Configuring with docker image`](./Docker.md)
 
 #### Kubernetes
 If you're using Kubernetes, the credentials should be provided through mounted secrets volume. It's recommended to use the provided Helm Chart to handle all of the specfile generation and deployment. See the Helm section below for more info.
 
-See [`Configuring on Kubernetes`](./docs/GKE.md)
+See [`Configuring on Kubernetes`](./GKE.md)
 
 #### Logging
 
-See [`Configuring Logging`](./docs/Logging.md)
+See [`Configuring Logging`](./Logging.md)
 
 ### Connecting to the SFTP server
 

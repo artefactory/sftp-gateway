@@ -77,4 +77,4 @@ title = "gitleaks config"
 	    file = '''^gitleaks.toml$'''
 
 [Global]
-    file = '''(?i)(id_rsa|passwd|id_rsa.pub|pgpass|pem|\.key$|\-key\.|\_key\.pub|shadow)'''
+    file = '''(?i)(id_rsa|passwd|id_rsa.pub|pgpass|pem|key|shadow)'''
