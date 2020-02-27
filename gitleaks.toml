@@ -26,9 +26,39 @@ title = "gitleaks config"
 	tags = ["key", "Github"]
 
 [[rules]]
+	description = "PRIVATE"
+	regex = '''-----BEGIN PRIVATE KEY-----'''
+	tags = ["key", "PRIVATE"]
+	[[rules.whitelist]]
+	    file = '''^gitleaks.toml$'''
+
+[[rules]]
 	description = "EC"
 	regex = '''-----BEGIN EC PRIVATE KEY-----'''
 	tags = ["key", "EC"]
+	[[rules.whitelist]]
+	    file = '''^gitleaks.toml$'''
+
+[[rules]]
+	description = "DSA"
+	regex = '''-----BEGIN DSA PRIVATE KEY-----'''
+	tags = ["key", "DSA"]
+	[[rules.whitelist]]
+	    file = '''^gitleaks.toml$'''
+
+[[rules]]
+	description = "RSA"
+	regex = '''-----BEGIN RSA PRIVATE KEY-----'''
+	tags = ["key", "RSA"]
+	[[rules.whitelist]]
+	    file = '''^gitleaks.toml$'''
+
+[[rules]]
+	description = "OPENSSH"
+	regex = '''-----BEGIN OPENSSH PRIVATE KEY-----'''
+	tags = ["key", "OPENSSH"]
+	[[rules.whitelist]]
+	    file = '''^gitleaks.toml$'''
 
 [[rules]]
 	description = "Google API key"
@@ -43,10 +73,8 @@ title = "gitleaks config"
 	description = "Generic Credential"
 	regex = '''(?i)(dbpasswd|dbuser|dbname|dbhost|api_key|apikey|api|password|hostname|pw|auth)(.{0,20})?['|"][0-9a-zA-Z-_!{}/=]{4,120}['|"]'''
 	tags = ["key", "API", "generic"]
+	[[rules.whitelist]]
+	    file = '''^gitleaks.toml$'''
 
 [Global]
     file = '''(?i)(id_rsa|passwd|id_rsa.pub|pgpass|pem|\.key$|\-key\.|\_key\.pub|shadow)'''
-
-[whitelist]
-	description = "whitelists"
-	file = '''(?:^gitleaks.toml$|^(.*?)(jpg|gif|doc|pdf|bin)$)'''
