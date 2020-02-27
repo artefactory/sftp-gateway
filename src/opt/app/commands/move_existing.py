@@ -24,7 +24,6 @@ from loguru import logger
 import config
 
 
-
 def move_existing():
     """Summary
     """
