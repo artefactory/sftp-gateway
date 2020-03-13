@@ -19,6 +19,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: {{.Values.gcloud.user}}-{{.Values.app.name}}
+  namespace: sftp-gateway
   labels:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
@@ -27,6 +28,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
+  namespace: sftp-gateway
 subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: User

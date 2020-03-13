@@ -28,7 +28,9 @@ def move_existing():
     """Summary
     """
     logger.info("Moving existing files")
-    existing_files = glob.glob(os.path.join(config.APP_LANDING_INGEST_DIR, "*"))
 
-    for file in existing_files:
-        upload_file(file)
+    for user in config.USERS:
+        existing_files = glob.glob(os.path.join(user["APP_INGEST_DIR"], "*"))
+        for file in existing_files:
+            upload_file(file)
+            os.remove(file)

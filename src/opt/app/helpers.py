@@ -22,7 +22,7 @@ import fnmatch
 import config
 
 
-def is_tmp(path: str):
+def is_ignored(path: str):
     """Summary
 
     Args:

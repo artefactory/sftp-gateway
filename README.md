@@ -75,7 +75,7 @@ Only the contents of the `stage/ingest` directory are mapped to GCS.
 To connect to the SFTP, you can use the following command :
 
 ```shell
-sftp -P ${APP_HOST_PORT} -i $(pwd)/credentials/${ENV}/files/${APP_SFTP_PRIVATEKEY_NAME} ${APP_SFTP_USER}@{APP_SERVICE_IP}:stage/ingest/
+sftp -P ${APP_HOST_PORT} -i $(pwd)/credentials/${ENV}/${APP_SFTP_PRIVATEKEY_NAME} ${APP_SFTP_USER}@{APP_SERVICE_IP}:stage/ingest/
 ```
 
 

@@ -29,18 +29,19 @@ def set_landing_permissions():
     """
     logger.info("Setting landing directory permissions")
 
-    for root, dirs, files in os.walk(config.APP_LANDING_DIR):
+    for user in config.USERS:
+        os.chmod(user['APP_LANDING_DIR'], 0o755)
+        for root, dirs, files in os.walk(f"{user['APP_LANDING_DIR']}"):
+            for directory in dirs:
+                chown(os.path.join(root, directory), int(user["SFTP_UUID"]), int(config.APP_SFTP_GUID))
+            for file in files:
+                chown(os.path.join(root, file), int(user["SFTP_UUID"]), int(config.APP_SFTP_GUID))
 
-        for directory in dirs:
-            chown(os.path.join(root, directory))
-        for file in files:
-            chown(os.path.join(root, file))
 
-
-def chown(path: str):
+def chown(path: str, uuid, guid):
     """Summary
 
     Args:
         p (str): Description
     """
-    os.chown(path, int(config.APP_SFTP_UUID), int(config.APP_SFTP_GUID))
+    os.chown(path, uuid, guid)

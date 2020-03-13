@@ -1,3 +1,4 @@
+
 #### Generating a fixed IP address
 
 In order to expose the SFTP server, you need to reserve a static IP address that will be used by Kubernetes. The IP address needs to be in the same zone as the Kubernetes cluster.

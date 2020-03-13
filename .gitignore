@@ -1,20 +1,19 @@
 credentials/*
 secrets/*
-
-config
-kube_generated/
-
+config/*
 **/*.pyc
 
 helm/nautilus-sftp-gateway/secrets/*
 helm/nautilus-sftp-gateway/values.yaml
 helm/nautilus-sftp-gateway/values/*
 
-env/*
+env/
+!env/users/sample
 !env/common
 !env/sample
+!env/config/
 
 .vscode
+.DS_Store
 
 data/
-batchfile.txt

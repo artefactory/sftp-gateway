@@ -29,10 +29,9 @@ def create_directories():
     """
     logger.info("Creating directories")
 
-    safe_make_dir(config.APP_LANDING_DEV_DIR)
-    safe_make_dir(config.APP_LANDING_INGEST_DIR)
-    safe_make_dir(config.APP_LANDING_UPLOAD_DIR)
-    safe_make_dir(config.APP_LANDING_ERROR_DIR)
+    for user in config.USERS:
+        safe_make_dir(f"{user['APP_LANDING_DIR']}")
+        safe_make_dir(f"{user['APP_INGEST_DIR']}")
 
 
 def safe_make_dir(path: str):

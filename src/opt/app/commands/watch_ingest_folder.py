@@ -17,7 +17,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """Summary
 """
-from typing import List
+from typing import List, Dict
 
 import os
 
@@ -46,11 +46,13 @@ class FileWatcher:
         self.watched_flags = flags.CREATE | flags.MOVED_TO | flags.ISDIR
         self.directories = {}
         self.watch_descriptors = {}
-        watch_descriptor = self.inotify.add_watch(config.APP_LANDING_INGEST_DIR, self.watched_flags)
-        self.directories[watch_descriptor] = config.APP_LANDING_INGEST_DIR
-        self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
-        logger.info("Watching ingestion folder")
-
+        self.users = {}
+        for user in config.USERS:
+            watch_descriptor = self.inotify.add_watch(user["APP_INGEST_DIR"], self.watched_flags)
+            self.directories[watch_descriptor] = user["APP_INGEST_DIR"]
+            self.users[watch_descriptor] = user["APP_USERNAME"]
+            self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
+            logger.info("Watching ingestion folder")
         while True:
             events = self.inotify.read(read_delay=1000)
             all_events = self.get_all_events(events)
@@ -58,9 +60,10 @@ class FileWatcher:
                 path = os.path.join(self.directories[event.wd], event.name)
                 upload_file(path)
                 os.remove(path)
-            self.delete_folders_if_empty(config.APP_LANDING_INGEST_DIR)
+            for user in config.USERS:
+                self.delete_subdirectories_if_empty(user["APP_INGEST_DIR"])
 
-    def delete_folders_if_empty(self, dirname: str):
+    def delete_subdirectories_if_empty(self, dirname: str):
         """Summary
 
         Args:
@@ -70,10 +73,11 @@ class FileWatcher:
             for name in dirs:
                 dir_path = os.path.join(root, name)
                 if not os.listdir(dir_path):  # An empty list is False
-                    self.inotify.rm_watch(self.watch_descriptors[os.path.join(root, name)])
-                    del self.directories[self.watch_descriptors[os.path.join(root, name)]]
-                    del self.watch_descriptors[os.path.join(root, name)]
-                    os.rmdir(os.path.join(root, name))
+                    if os.path.join(root, name) in self.watch_descriptors:
+                        self.inotify.rm_watch(self.watch_descriptors[os.path.join(root, name)])
+                        del self.directories[self.watch_descriptors[os.path.join(root, name)]]
+                        del self.watch_descriptors[os.path.join(root, name)]
+                        os.rmdir(os.path.join(root, name))
 
     def get_all_events(self, events: List[Event]):
         """Summary
@@ -89,6 +93,7 @@ class FileWatcher:
         for event in events:
             is_dir = False
             deleted = False
+            event_user = self.users[event.wd]
             for flag in flags.from_mask(event.mask):
                 if flag == flag.ISDIR:
                     is_dir = True
@@ -96,15 +101,15 @@ class FileWatcher:
                     deleted = True
             if is_dir and not deleted:
                 watch_descriptor = self.inotify.add_watch(
-                    os.path.join(config.APP_LANDING_INGEST_DIR, event.name),
+                    os.path.join(config.APP_LANDING_BASE, event_user, "ingest", event.name),
                     self.watched_flags
                 )
                 self.directories[watch_descriptor] = os.path.join(
-                    config.APP_LANDING_INGEST_DIR,
-                    event.name
+                    config.APP_LANDING_BASE, event_user, "ingest", event.name
                 )
+                self.users[watch_descriptor] = event_user
                 self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
-                all_events = self.check_subfolders(watch_descriptor, all_events)
+                all_events = self.check_subfolders(watch_descriptor, all_events, event_user)
             elif not deleted:
                 all_events += [event]
                 logger.info(
@@ -116,7 +121,7 @@ class FileWatcher:
         logger.info(f"All events : {all_events}")
         return all_events
 
-    def check_subfolders(self, watch_descriptor: int, all_events: List[Event]):
+    def check_subfolders(self, watch_descriptor: int, all_events: List[Event], event_user: str):
         """Summary
 
         Args:
@@ -133,6 +138,7 @@ class FileWatcher:
                     self.watched_flags
                 )
                 self.directories[watch_descriptor] = os.path.join(root, folder)
+                self.users[watch_descriptor] = event_user
                 self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
             for file in files:
                 all_events += [

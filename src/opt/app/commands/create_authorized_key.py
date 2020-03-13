@@ -29,13 +29,20 @@ def create_authorized_key():
     """
     logger.info("Creating authorized key")
 
-    with open(config.APP_SFTP_AUTHORIZEDKEYS_KEYPATH, 'w') as handle:
-        with open(config.APP_SFTP_PUBLICKEY_PATH, 'r') as reader:
-            handle.write(reader.read())
-
-    os.chmod(config.APP_SFTP_AUTHORIZEDKEYS_KEYPATH, 0o644)
-    os.chown(
-        config.APP_SFTP_AUTHORIZEDKEYS_KEYPATH,
-        int(config.APP_SFTP_UUID),
-        int(config.APP_SFTP_GUID)
-    )
+    for user in config.USERS:
+        os.mkdir(os.path.join(user['APP_LANDING_DIR'], ".ssh"))
+        os.chmod(os.path.join(user['APP_LANDING_DIR'], ".ssh"), 0o700)
+        os.chown(
+            os.path.join(user['APP_LANDING_DIR'], ".ssh"),
+            int(user["SFTP_UUID"]),
+            int(config.APP_SFTP_GUID)
+        )
+        with open(os.path.join(user['APP_LANDING_DIR'], ".ssh", "authorized_keys"), 'w') as handle:
+            with open(user['APP_SFTP_PUBLICKEY_PATH'], 'r') as reader:
+                handle.write(reader.read())
+        os.chmod(os.path.join(user['APP_LANDING_DIR'], ".ssh", "authorized_keys"), 0o600)
+        os.chown(
+            os.path.join(user['APP_LANDING_DIR'], ".ssh", "authorized_keys"),
+            int(user["SFTP_UUID"]),
+            int(config.APP_SFTP_GUID)
+        )
