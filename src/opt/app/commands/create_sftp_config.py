@@ -20,6 +20,7 @@
 from loguru import logger
 import pystache
 import config
+import os
 
 
 def create_sftp_config():
@@ -30,11 +31,9 @@ def create_sftp_config():
     renderer = pystache.Renderer()
 
     context = {
-        "authorized_keys_file": config.APP_SFTP_AUTHORIZEDKEYS_KEYPATH,
-        "user": config.APP_SFTP_USER,
-        "landing_directory": config.APP_LANDING_DIR,
-        "ssh_port": config.APP_SFTP_PORT,
-        "syslog_facility": config.SYSLOG_FACILITY
+        "authorized_keys_files": " ".join([os.path.join(config.APP_SFTP_AUTHORIZEDKEYS_DIR, user['APP_USERNAME']) for user in config.USERS]),
+        "users": " ".join([user["APP_USERNAME"] for user in config.USERS]),
+        "ssh_port": config.APP_SFTP_PORT
     }
 
     render_config = renderer.render_path(config.get_template("sshd_config"), context)

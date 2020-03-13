@@ -20,6 +20,7 @@ kind: Service
 metadata:
   name: {{ .Values.app.service.name }}
   {{ if eq .Values.app.service.internal "1" -}}
+  namespace: sftp-gateway
   annotations:
     cloud.google.com/load-balancer-type: "Internal"
   {{ end }}

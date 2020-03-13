@@ -8,7 +8,7 @@ You can generate your own public/private key pair by running the command:
 ENV=your-env-name make create_ssh_key
 ```
 
-The keys will be placed in `./credentials/<your-env-name>/files/`.
+The keys will be placed in `./credentials/<your-env-name>/`.
 
 #### SSH Host Keys (Optional)
 When you connect to an SFTP server, before verifying your identity it sends you a unique signature that identifies the server. This signature is typically stored by SFTP clients to verify the identity of the server the next time you connect.
@@ -42,4 +42,4 @@ You can generate your own SSH host keys by running:
 ENV=your-env-name make create_ssh_host_keys
 ```
 
-The files will be placed in `./credentials/<your-env-name>/files/`.
+The files will be placed in `./credentials/<your-env-name>/`.

@@ -27,6 +27,7 @@ Attributes:
     TEMPLATE_DIRECTORY (str): Description
 """
 import os
+import json
 
 for variable, value in os.environ.items():
     locals()[variable.strip()] = value.strip()
@@ -34,10 +35,13 @@ for variable, value in os.environ.items():
 
 FORBIDDEN_USERNAMES = [u.split(':')[0] for u in open('/etc/passwd', 'r').read().split()]
 
-APP_SFTP_AUTHORIZEDKEYS_KEYPATH = os.path.join(
-    locals()['APP_SFTP_AUTHORIZEDKEYS_DIR'],
-    locals()['APP_SFTP_USER']
-)
+INPUT_CONFIG = locals().copy()
+
+USERS = []
+for key, value in INPUT_CONFIG.items():
+    if key[:len('SFTP_USER_')] == "SFTP_USER_":
+        USERS += [json.loads(INPUT_CONFIG[key][1:-1])]
+
 
 TEMPLATE_DIRECTORY = os.path.join(os.path.dirname(__file__), 'templates')
 
