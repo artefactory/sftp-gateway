@@ -7,7 +7,7 @@ helm/nautilus-sftp-gateway/secrets/*
 helm/nautilus-sftp-gateway/values.yaml
 helm/nautilus-sftp-gateway/values/*
 
-env/
+env/*
 !env/users/sample
 !env/common
 !env/sample
