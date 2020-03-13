@@ -38,7 +38,7 @@ You can run the docker image with:
 
 ```shell
 docker run --rm -it --env-file ./config/${ENV} \
-                    -v $(pwd)/credentials/${ENV}/files:${APP_SECRETS_DIR} \
+                    -v $(pwd)/credentials/${ENV}:${APP_SECRETS_DIR} \
                     -p ${APP_HOST_PORT}:${APP_SFTP_PORT} \
                     ${APP_DOCKER_IMAGE}
 ```
@@ -52,5 +52,5 @@ docker exec -it $(docker ps | grep ${APP_DOCKER_IMAGE} | tr -s " " | cut -d " " 
 ```
 or you can use the SFTP command to connect to the local SFTP server :
 ```shell
-sftp -P ${APP_HOST_PORT} -i $(pwd)/credentials/${ENV}/files/${APP_SFTP_PRIVATEKEY_NAME} ${APP_SFTP_USER}@0.0.0.0:stage/ingest/
+sftp -P ${APP_HOST_PORT} -i $(pwd)/credentials/${ENV}/${APP_SFTP_PRIVATEKEY_NAME} ${APP_SFTP_USER}@0.0.0.0:stage/ingest/
 ```

@@ -19,6 +19,7 @@ apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: StatefulSet
 metadata:
   name: {{ .Values.app.name }}
+  namespace: sftp-gateway
   labels:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
@@ -48,21 +49,14 @@ spec:
         envFrom:
         - configMapRef:
             name: {{ .Values.app.configmap.name }}
-        env:
-        - name: GCP_PROJECT_ID
-          value: {{ .Values.gcp.project.id }}
-        - name: APP_SFTP_USER
-          value: {{ .Values.app.sftp.user }}
-        - name: APP_GCS_BUCKETS
-          value: {{ .Values.app.gcs.buckets }}
+        ports:
+        - containerPort: 22
         volumeMounts:
         - name: {{ .Values.app.secrets.name }}
           mountPath: {{ .Values.app.secrets.dir }}
           readOnly: true
         - name: landing
-          mountPath: {{ .Values.app.landing.dir }}
-        ports:
-        - containerPort: 22
+          mountPath: {{ .Values.app.landing.base }}
   volumeClaimTemplates:
   - metadata:
       name: landing
@@ -70,4 +64,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 100Gi
+          storage: 10Gi

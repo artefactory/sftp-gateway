@@ -21,8 +21,8 @@ import os
 from loguru import logger
 
 import command
-import config
 import helpers
+import config
 
 
 def upload_file(file_path: str):
@@ -31,17 +31,34 @@ def upload_file(file_path: str):
     Args:
         file_path (str): Description
     """
-    buckets = config.APP_GCS_BUCKETS.split(",")
-    logger.info(f"Uploading file at path : {file_path}")
-    for bucket in buckets:
-        relative_path = os.path.relpath(file_path, config.APP_LANDING_INGEST_DIR)
-        upload_command = [
-            "/usr/bin/gsutil",
-            "cp",
-            file_path,
-            f"gs://{os.path.join(bucket, relative_path)}",
+    user = get_user_from_path(file_path)
+    for project_id, project_info in user["gcs_buckets"].items():
+        logger.info(f"Configuring gcloud for project {project_id}")
+        auth = [
+            "gcloud",
+            "auth",
+            "activate-service-account",
+            "--key-file={}".format(project_info["GCP_SERVICEACCOUNT_KEY_PATH"]),
         ]
-        if not helpers.is_tmp(file_path):
-            command.run(upload_command, quiet=True)
-        else:
-            logger.info("Skipping temp file - {}", {"path": file_path})
+        project = ["gcloud", "config", "set", "project", project_id]
+        command.run(auth, quiet=True)
+        command.run(project, quiet=True)
+        buckets = project_info["buckets"]
+        logger.info(f"Uploading file at path : {file_path}")
+        for bucket in buckets:
+            relative_path = os.path.relpath(file_path, user["APP_INGEST_DIR"])
+            upload_command = [
+                "/usr/bin/gsutil",
+                "cp",
+                file_path,
+                f"gs://{os.path.join(bucket, relative_path)}",
+            ]
+            if not helpers.is_ignored(file_path):
+                command.run(upload_command, quiet=True)
+            else:
+                logger.info("Skipping temp file - {}", {"path": file_path})
+
+
+def get_user_from_path(file_path: str):
+    username = file_path[len(config.APP_LANDING_BASE):].strip('/').split('/')[0]
+    return [user for user in config.USERS if user["APP_USERNAME"] == username][0]

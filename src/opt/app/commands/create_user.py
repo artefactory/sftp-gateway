@@ -34,23 +34,32 @@ def create_user():
     """
     logger.info("Creating user")
 
-    if config.APP_SFTP_USER in config.FORBIDDEN_USERNAMES:
-        raise Exception("Username value is invalid")
+    for user in config.USERS:
+        if user in config.FORBIDDEN_USERNAMES:
+            raise Exception(f"Username {user['APP_USERNAME']} value is invalid")
 
-    create_user_command = [
-        "useradd",
-        "--no-create-home",
-        "--no-user-group",
-        "--uid",
-        str(config.APP_SFTP_UUID),
-        "--gid",
-        str(config.APP_SFTP_GUID),
-        "-p",
-        str(generate_pass()),
-        config.APP_SFTP_USER,
-    ]
+        create_user_command = [
+            "useradd",
+            "--no-create-home",
+            "--no-user-group",
+            "--uid",
+            f"{user['SFTP_UUID']}",
+            "--gid",
+            f"{config.APP_SFTP_GUID}",
+            "-p",
+            f"{generate_pass()}",
+            user['APP_USERNAME'],
+        ]
 
-    command.run(create_user_command)
+        change_user_directory_command = [
+            "usermod",
+            "-d",
+            f"{user['APP_LANDING_DIR']}",
+            f"{user['APP_USERNAME']}"
+        ]
+
+        command.run(create_user_command)
+        command.run(change_user_directory_command)
 
 
 def generate_pass():
