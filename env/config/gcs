@@ -1,0 +1,9 @@
+
+# The name of the GCP service account that will be created
+GCP_SERVICEACCOUNT_NAME={{APP_USERNAME}}-sftp
+GCP_SERVICEACCOUNT_IAM={{APP_USERNAME}}-sftp@{{GCP_BUCKET_PROJECT_ID}}.iam.gserviceaccount.com
+# The name and path of the GCP service account key, the app will expect the JSON file
+# to be available in the container at this location
+GCP_SERVICEACCOUNT_KEY_NAME={{APP_USERNAME}}/google/{{ENV}}-{{GCP_BUCKET_PROJECT_ID}}-sa-key.json
+GCP_SERVICEACCOUNT_KEY_PATH={{APP_SECRETS_DIR}}/users/{{APP_USERNAME}}/google/{{ENV}}-{{GCP_BUCKET_PROJECT_ID}}-sa-key.json
+
