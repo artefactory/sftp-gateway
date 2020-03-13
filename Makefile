@@ -30,8 +30,7 @@ clean_config:
 
 .PHONY: docker_publish
 docker_publish: docker_build docker_configure_auth
-	docker tag ${APP_DOCKER_IMAGE} ${APP_DOCKER_REGISTRY}/${GCP_PROJECT_ID}/${APP_DOCKER_IMAGE}:${APP_DOCKER_TAG}
-	docker push ${APP_DOCKER_REGISTRY}/${GCP_PROJECT_ID}/${APP_DOCKER_IMAGE}:${APP_DOCKER_TAG}
+	docker push ${APP_DOCKER_URL}
 
 .PHONY: docker_configure_auth
 docker_configure_auth:
@@ -40,7 +39,7 @@ docker_configure_auth:
 .PHONY: docker_build
 docker_build: clean generate_config credentials
 	build_args=$$(for i in $$(cat ${ENV_FILE}); do out+="--build-arg $${i} " ; done; echo $${out};out="") && \
-	docker build --rm -t ${APP_DOCKER_IMAGE} $${build_args} .
+	docker build --rm -t ${APP_DOCKER_URL} $${build_args} .
 
 .PHONY: docker_run
 docker_run: generate_config credentials docker_build
@@ -49,7 +48,7 @@ docker_run: generate_config credentials docker_build
 						 --env-file ${ENV_FILE} \
 						 -v $$(pwd)/credentials/${environment}:${APP_SECRETS_DIR} \
 						 -p ${APP_HOST_PORT}:${APP_SFTP_PORT} \
-						${APP_DOCKER_IMAGE}
+						${APP_DOCKER_URL}
 
 MK_CREDENTIALS_DIR = credentials/${environment}
 MK_CREDENTIALS_INTERNAL_DIR = ${MK_CREDENTIALS_DIR}/internal
