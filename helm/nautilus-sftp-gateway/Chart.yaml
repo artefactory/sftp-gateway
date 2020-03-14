@@ -17,4 +17,5 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 apiVersion: v1
 name: nautilus-sftp-gateway
+namespace: sftp-gateway
 version: 1.0.1
