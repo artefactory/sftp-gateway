@@ -156,17 +156,21 @@ helm_setup:
 
 .PHONY: helm_debug
 helm_debug: helm_generate_values
-	helm install --dry-run --debug --set gcloud.user=${GCLOUD_USER} -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
+	helm install --dry-run --debug -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
 
 .PHONY: helm_install
-helm_install: setup_kubernetes_access docker_publish helm_generate_values
+helm_install: setup_container_registry_access setup_kubernetes_access docker_publish helm_generate_values
 	count=$$(helm ls -q ${APP_NAME} | grep -c "^${APP_NAME}$$"); \
 	if [ $${count} -eq 1 ]; then \
 		command="upgrade ${APP_NAME} --recreate-pods"; \
 	else \
 		command="install --name ${APP_NAME}"; \
 	fi; \
-	helm $${command} --set gcloud.user=${GCLOUD_USER} -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
+	helm $${command} -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
+
+.PHONY: setup_container_registry_access
+setup_container_registry_access:
+	ENV=${environment} sh ./bin/setup_container_registry_access.sh
 
 .PHONY: setup_kubernetes_access
 setup_kubernetes_access:

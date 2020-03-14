@@ -9,5 +9,6 @@ GCP_PROJECT_ID=<INSERT_GCP_PROJECT_ID_HERE>
 # When using K8S, this will be the IP Address of the LoadBalancer service
 APP_SERVICE_IP=<INSERT_STATIC_IPv4_ADDRESS_HERE (ex: 35.45.187.4)>
 
+APP_DOCKER_REGISTRY=<INSERT_REGISTRY_NAME (ex: gcr.io)>
 # The url of the docker image in its container registry
 APP_DOCKER_URL=<INSERT_CONTAINER_REGISTRY_URL (ex: {{APP_DOCKER_REGISTRY}}/{{GCP_PROJECT_ID}}/{{APP_DOCKER_IMAGE}}:{{APP_DOCKER_TAG}})>
