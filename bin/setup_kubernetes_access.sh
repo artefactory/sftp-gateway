@@ -1,11 +1,11 @@
 #!/bin/sh
 
-export $(egrep -v '^#' config/${ENV} | xargs)
+source config/${ENV}
 context_exists=$(kubectl config use-context ${K8S_CLUSTER_NAME})
 if [[ "${context_exists}" != "" ]]
 then
-	connected=$(timeout 10s kubectl get all -A)
-	if [[ "${connected}" == "" ]]
+	kubectl get all -A & sleep 5 ; kill $!;
+	if [[ $? == 0 ]]
 	then
 	    echo "Authentication to the ${K8S_CLUSTER_NAME} cluster is not working properly. Please update your kubeconfig file..."
 	else
