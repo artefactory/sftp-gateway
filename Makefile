@@ -65,16 +65,16 @@ create_user_keys:
 	    if [[ ! -d ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"} ]]; then \
 	        mkdir ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"} ; \
 	    fi ; \
-	    if [[ ! -f ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"}/rsa_key ]]; then \
-	    	ssh-keygen -N "" -f ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"}/rsa_key ; \
+	    if [[ ! -f ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"}/rsa-key ]]; then \
+	    	ssh-keygen -N "" -f ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"}/rsa-key ; \
 	    fi ; \
 	done;
 
 
-MK_APP_SFTP_HOSTKEY_ECDSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh_host_ecdsa_key
-MK_APP_SFTP_HOSTKEY_DSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh_host_dsa_key
-MK_APP_SFTP_HOSTKEY_ED25519 = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh_host_ed25519_key
-MK_APP_SFTP_HOSTKEY_RSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh_host_rsa_key
+MK_APP_SFTP_HOSTKEY_ECDSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh-host-ecdsa-key
+MK_APP_SFTP_HOSTKEY_DSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh-host-dsa-key
+MK_APP_SFTP_HOSTKEY_ED25519 = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh-host-ed25519-key
+MK_APP_SFTP_HOSTKEY_RSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh-host-rsa-key
 
 .PHONY: create_ssh_host_keys
 create_ssh_host_keys: credentials_dir $(MK_APP_SFTP_HOSTKEY_ECDSA) $(MK_APP_SFTP_HOSTKEY_DSA) $(MK_APP_SFTP_HOSTKEY_ED25519) $(MK_APP_SFTP_HOSTKEY_RSA)
@@ -135,7 +135,7 @@ generate_config: env/${environment} env/common
 	ENV=${environment} python ./bin/configure.py
 
 MK_HELM_CONFIG = helm/nautilus-sftp-gateway/values/${environment}.yaml
-MK_HELM_SECRETS = helm/nautilus-sftp-gateway/secrets/${environment}
+MK_HELM_SECRETS = helm/nautilus-sftp-gateway/secrets
 
 .PHONY: helm_generate_values
 helm_generate_values: credentials $(MK_HELM_CONFIG)
@@ -159,7 +159,7 @@ helm_debug: helm_generate_values
 	helm install --dry-run --debug -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
 
 .PHONY: helm_install
-helm_install: setup_container_registry_access setup_kubernetes_access docker_publish helm_generate_values
+helm_install: setup_container_registry_access setup_kubernetes_access docker_publish helm_setup helm_generate_values
 	count=$$(helm ls -q ${APP_NAME} | grep -c "^${APP_NAME}$$"); \
 	if [ $${count} -eq 1 ]; then \
 		command="upgrade ${APP_NAME} --recreate-pods"; \

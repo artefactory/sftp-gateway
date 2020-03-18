@@ -40,7 +40,7 @@ INPUT_CONFIG = locals().copy()
 USERS = []
 for key, value in INPUT_CONFIG.items():
     if key[:len('SFTP_USER_')] == "SFTP_USER_":
-        USERS += [json.loads(INPUT_CONFIG[key][1:-1])]
+        USERS += [json.loads(INPUT_CONFIG[key].strip("'"))]
 
 
 TEMPLATE_DIRECTORY = os.path.join(os.path.dirname(__file__), 'templates')

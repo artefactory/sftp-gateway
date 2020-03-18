@@ -28,7 +28,7 @@ spec:
   selector:
     matchLabels:
       app: {{ .Values.app.name }}
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -39,10 +39,17 @@ spec:
     spec:
       volumes:
       - name: {{ .Values.app.secrets.name }}
+        namespace: sftp-gateway
         secret:
           secretName: {{ .Values.app.secrets.name }}
+          items:
+          {{- range $path, $bytes := .Files.Glob "secrets/**" }}
+          - key: {{ $path | replace "/" "_" }}
+            path: {{ trimPrefix (printf "secrets/%s/" $.Values.env) $path }}
+          {{- end }}
       containers:
       - name: {{ .Values.app.name }}
+        namespace: sftp-gateway
         image: {{ .Values.app.docker.url }}
         imagePullPolicy: Always
         command: ["python3", "/opt/app/bin/launch.py"]
@@ -53,13 +60,16 @@ spec:
         - containerPort: 22
         volumeMounts:
         - name: {{ .Values.app.secrets.name }}
+          namespace: sftp-gateway
           mountPath: {{ .Values.app.secrets.dir }}
           readOnly: true
         - name: landing
+          namespace: sftp-gateway
           mountPath: {{ .Values.app.landing.base }}
   volumeClaimTemplates:
   - metadata:
       name: landing
+      namespace: sftp-gateway
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
