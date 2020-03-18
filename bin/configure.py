@@ -5,15 +5,8 @@ from bin import render_config
 
 data = {}
 
-render_config(f"env/{os.environ['ENV']}", data)
-render_config(f"env/common", data)
 
-for user in os.listdir("env/users"):
-    data[user] = {}
-    render_config(f"env/users/{user}", data[user])
-    render_config(f"env/config/landing", data[user])
-    data[user]["SFTP_UUID"] = int(os.environ["APP_SFTP_UUID"]) + 1
-    data["APP_SFTP_UUID"] = int(os.environ["APP_SFTP_UUID"]) + 1
+def generate_gcs_config_for_user(data, user):
     if "GCP_BUCKET_PROJECT_IDS" in os.environ and "APP_GCS_BUCKETS" in os.environ:
         data[user]["gcs_buckets"] = {}
         for gcs_bucket_name, gcs_bucket_project_id in zip(
@@ -36,6 +29,19 @@ for user in os.listdir("env/users"):
             del os.environ[key]
         if "GCP_BUCKET_PROJECT_ID" in os.environ:
             del os.environ["GCP_BUCKET_PROJECT_ID"]
+    return data
+
+
+render_config(f"env/{os.environ['ENV']}", data)
+render_config(f"env/common", data)
+
+for user in os.listdir("env/users"):
+    data[user] = {}
+    render_config(f"env/users/{user}", data[user])
+    render_config(f"env/config/landing", data[user])
+    data[user]["SFTP_UUID"] = int(os.environ["APP_SFTP_UUID"]) + 1
+    data["APP_SFTP_UUID"] = int(os.environ["APP_SFTP_UUID"]) + 1
+    data = generate_gcs_config_for_user(data, user)
     os.environ["APP_SFTP_UUID"] = f'{data[user]["SFTP_UUID"]}'
 
 with open(f"config/{os.environ['ENV']}", "w") as f:
