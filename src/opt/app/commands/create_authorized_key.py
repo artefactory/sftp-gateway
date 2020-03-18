@@ -30,7 +30,8 @@ def create_authorized_key():
     logger.info("Creating authorized key")
 
     for user in config.USERS:
-        os.mkdir(os.path.join(user['APP_LANDING_DIR'], ".ssh"))
+        if not os.path.exists(os.path.join(user['APP_LANDING_DIR'], ".ssh")):
+            os.mkdir(os.path.join(user['APP_LANDING_DIR'], ".ssh"))
         os.chmod(os.path.join(user['APP_LANDING_DIR'], ".ssh"), 0o700)
         os.chown(
             os.path.join(user['APP_LANDING_DIR'], ".ssh"),

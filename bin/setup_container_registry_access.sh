@@ -4,7 +4,8 @@ source config/${ENV}
 
 config_exists=$(cat ~/.docker/config.json | grep $APP_DOCKER_REGISTRY)
 if [[ "${config_exists}" != "" ]]
-	echo "A configuration already exists but you may still need to re-authenticate to your registry"
+then
+	echo "A container registry configuration already exists but you may still need to re-authenticate to your registry"
 else
 	echo "
 Please setup your docker configuration by using one of the following tools
