@@ -17,10 +17,10 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """Summary
 """
+import os
 from loguru import logger
 import pystache
 import config
-import os
 
 
 def create_sftp_config():
@@ -31,7 +31,12 @@ def create_sftp_config():
     renderer = pystache.Renderer()
 
     context = {
-        "authorized_keys_files": " ".join([os.path.join(config.APP_SFTP_AUTHORIZEDKEYS_DIR, user['APP_USERNAME']) for user in config.USERS]),
+        "authorized_keys_files": " ".join(
+            [
+                os.path.join(config.APP_SFTP_AUTHORIZEDKEYS_DIR, user['APP_USERNAME'])
+                for user in config.USERS
+            ]
+        ),
         "users": " ".join([user["APP_USERNAME"] for user in config.USERS]),
         "ssh_port": config.APP_SFTP_PORT
     }

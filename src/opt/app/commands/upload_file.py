@@ -1,3 +1,5 @@
+"""Summary
+"""
 # GNU Lesser General Public License v3.0 only
 # Copyright (C) 2020 Artefact
 # licence-information@artefact.com
@@ -15,11 +17,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-"""Summary
-"""
 import os
 from loguru import logger
-
 import command
 import helpers
 import config
@@ -27,7 +26,6 @@ import config
 
 def upload_file(file_path: str):
     """Summary
-
     Args:
         file_path (str): Description
     """
@@ -59,6 +57,12 @@ def upload_file(file_path: str):
                 logger.info("Skipping temp file - {}", {"path": file_path})
 
 
-def get_user_from_path(file_path: str):
+def get_user_from_path(file_path: str) -> str:
+    """Summary
+    Args:
+        file_path (str): Description
+    Returns:
+        str: Description
+    """
     username = file_path[len(config.APP_LANDING_BASE):].strip('/').split('/')[0]
     return [user for user in config.USERS if user["APP_USERNAME"] == username][0]
