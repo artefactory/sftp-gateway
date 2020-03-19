@@ -1,3 +1,5 @@
+"""Summary
+"""
 # GNU Lesser General Public License v3.0 only
 # Copyright (C) 2020 Artefact
 # licence-information@artefact.com
@@ -15,9 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-"""Summary
-"""
-from typing import List, Dict
+from typing import List
 
 import os
 
@@ -31,10 +31,10 @@ import config
 class FileWatcher:
 
     """Summary
-
     Attributes:
         directories (dict): Description
         inotify (INotify): Description
+        users (dict): Description
         watch_descriptors (dict): Description
         watched_flags (int): Description
     """
@@ -65,7 +65,6 @@ class FileWatcher:
 
     def delete_subdirectories_if_empty(self, dirname: str):
         """Summary
-
         Args:
             dirname (str): Description
         """
@@ -79,12 +78,10 @@ class FileWatcher:
                         del self.watch_descriptors[os.path.join(root, name)]
                         os.rmdir(os.path.join(root, name))
 
-    def get_all_events(self, events: List[Event]):
+    def get_all_events(self, events: List[Event]) -> List[Event]:
         """Summary
-
         Args:
             events (List[Event]): Description
-
         Returns:
             List[Event]: Description
         """
@@ -121,13 +118,17 @@ class FileWatcher:
         logger.info(f"All events : {all_events}")
         return all_events
 
-    def check_subfolders(self, watch_descriptor: int, all_events: List[Event], event_user: str):
+    def check_subfolders(
+            self,
+            watch_descriptor: int,
+            all_events: List[Event],
+            event_user: str
+        ) -> List[Event]:
         """Summary
-
         Args:
             watch_descriptor (int): Description
             all_events (List[Event]): Description
-
+            event_user (str): Description
         Returns:
             List[Event]: Description
         """
