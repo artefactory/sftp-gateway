@@ -41,7 +41,4 @@ The container does not contain any credentials, they must be provided at deploym
 - [5 - Cluster configuration](./docs/5-ClusterConfiguration.md)
 - [6 - SFTP connection](./docs/6-SFTPConnection.md)
 
-## Tutorial
-
-TODO: add video tutorial
 
