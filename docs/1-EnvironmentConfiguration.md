@@ -1,6 +1,6 @@
 
 This step requires steps :
-- [0 - Installation](./docs/0-Installation.md)
+- [0 - Installation](./0-Installation.md)
 
 
 All of the configuration is managed through the environment files stored in the `./env` directory. There is a `common` environment file that contains the majority of the configuration directives, and typically doesn't need to be changed. You can then create additional configuration files for different environments/clients, such as `dev` or `prod` for example.

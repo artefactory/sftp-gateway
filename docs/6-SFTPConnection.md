@@ -1,7 +1,7 @@
 
 This step requires one of the following steps :
-- [4 - Docker configuration](./docs/4-DockerConfiguration.md)
-- [5 - Cluster configuration](./docs/5-ClusterConfiguration.md)
+- [4 - Docker configuration](./4-DockerConfiguration.md)
+- [5 - Cluster configuration](./5-ClusterConfiguration.md)
 
 
 For various technical reasons relating to [SFTP Chrooting](https://wiki.archlinux.org/index.php/SFTP_chroot), the SFTP users won't be able to send data to the Cloud Storage services from their root folders.
