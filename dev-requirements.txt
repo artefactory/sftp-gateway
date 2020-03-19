@@ -1,2 +1,4 @@
-google-cloud-resource-manager
-google-cloud-iam
+radon
+pytest
+pytest-cov
+google-api-python-client

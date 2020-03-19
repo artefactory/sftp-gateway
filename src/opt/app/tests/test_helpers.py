@@ -1,3 +1,5 @@
+"""Summary
+"""
 # GNU Lesser General Public License v3.0 only
 # Copyright (C) 2020 Artefact
 # licence-information@artefact.com
@@ -17,4 +19,6 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 def test_dummy():
+    """Summary
+    """
     assert True

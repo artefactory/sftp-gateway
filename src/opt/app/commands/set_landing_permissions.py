@@ -1,3 +1,5 @@
+"""Summary
+"""
 # GNU Lesser General Public License v3.0 only
 # Copyright (C) 2020 Artefact
 # licence-information@artefact.com
@@ -15,8 +17,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-"""Summary
-"""
 import os
 
 from loguru import logger
@@ -33,15 +33,24 @@ def set_landing_permissions():
         os.chmod(user['APP_LANDING_DIR'], 0o755)
         for root, dirs, files in os.walk(f"{user['APP_LANDING_DIR']}"):
             for directory in dirs:
-                chown(os.path.join(root, directory), int(user["SFTP_UUID"]), int(config.APP_SFTP_GUID))
+                chown(
+                    os.path.join(root, directory),
+                    int(user["SFTP_UUID"]),
+                    int(config.APP_SFTP_GUID)
+                )
             for file in files:
-                chown(os.path.join(root, file), int(user["SFTP_UUID"]), int(config.APP_SFTP_GUID))
+                chown(
+                    os.path.join(root, file),
+                    int(user["SFTP_UUID"]),
+                    int(config.APP_SFTP_GUID)
+                )
 
 
-def chown(path: str, uuid, guid):
+def chown(path: str, uuid: int, guid: int):
     """Summary
-
     Args:
-        p (str): Description
+        path (str): Description
+        uuid (int): Description
+        guid (int): Description
     """
     os.chown(path, uuid, guid)
