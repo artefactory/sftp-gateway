@@ -1,7 +1,7 @@
 
 This step requires steps :
-- [2 - Keys Generation](./docs/2 - Keys Generation.md)
-- [3 - Cloud configuration](./docs/3 - Cloud configuration.md)
+- [2 - Keys generation](./docs/2-KeysGeneration.md)
+- [3 - Cloud configuration](./docs/3-CloudConfiguration.md)
 
 
 #### Generating a fixed IP address

@@ -1,7 +1,7 @@
 
 This step requires steps :
-- [2 - Keys Generation](./docs/2 - Keys Generation.md)
-- [3 - Cloud configuration](./docs/3 - Cloud configuration.md)
+- [2 - Keys generation](./docs/2-KeysGeneration.md)
+- [3 - Cloud configuration](./docs/3-CloudConfiguration.md)
 
 
 If you're using vanilla Docker, a directory containing the above secret files should be mounted onto the container to the path configured by `${APP_SECRETS_DIR}` (by default, `/var/run/secrets/nautilus-sftp-${ENV}`).
