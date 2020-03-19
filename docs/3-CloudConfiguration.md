@@ -1,6 +1,6 @@
 
 This step requires steps :
-- [1 - Environment configuration](./docs/1-EnvironmentConfiguration.md)
+- [1 - Environment configuration](./1-EnvironmentConfiguration.md)
 
 
 #### GCP Service Account
