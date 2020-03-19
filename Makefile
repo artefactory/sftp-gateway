@@ -55,8 +55,8 @@ MK_CREDENTIALS_INTERNAL_DIR = ${MK_CREDENTIALS_DIR}/internal
 MK_CREDENTIALS_USERS_DIR = ${MK_CREDENTIALS_DIR}/users
 
 
-.PHONY: create_ssh_key
-create_ssh_key: credentials_dir create_user_keys
+.PHONY: create_ssh_keys
+create_ssh_keys: credentials_dir create_user_keys
 
 
 .PHONY: create_user_keys
@@ -106,7 +106,7 @@ $(MK_CREDENTIALS_USERS_DIR):
 
 
 .PHONY: credentials
-credentials: create_ssh_host_keys create_ssh_key create_services_credentials
+credentials: create_ssh_host_keys create_ssh_keys create_services_credentials
 
 
 .PHONY: create_services_credentials
@@ -155,7 +155,7 @@ helm_setup:
 	helm init --service-account tiller --upgrade
 
 .PHONY: helm_debug
-helm_debug: helm_generate_values
+helm_debug: helm_setup helm_generate_values
 	helm install --dry-run --debug -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
 
 .PHONY: helm_install
