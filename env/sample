@@ -4,10 +4,11 @@ ENV=sample
 
 
 K8S_CLUSTER_NAME=<INSERT_GKE_CLUSTER_NAME (ex: sftp-gateway)>
+K8S_REGION=<INSERT_GKE_CLUSTER_REGION (ex: europe-west1)>
 # The name of the GCP Project containing the GKE cluster
 GCP_PROJECT_ID=<INSERT_GCP_PROJECT_ID_HERE>
 # When using K8S, this will be the IP Address of the LoadBalancer service
-APP_SERVICE_IP=<INSERT_STATIC_IPv4_ADDRESS_HERE (ex: 35.45.187.4)>
+APP_SERVICE_IP=<INSERT_STATIC_IPv4_ADDRESS_HERE (ex: 0.0.0.0 or 35.45.187.4)>
 
 APP_DOCKER_REGISTRY=<INSERT_REGISTRY_NAME (ex: gcr.io)>
 # The url of the docker image in its container registry

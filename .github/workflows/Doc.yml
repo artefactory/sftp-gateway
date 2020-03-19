@@ -53,26 +53,26 @@ jobs:
       run: |
         pip install pytest-cov webtest
         cov=`pytest --cov=./src/opt/app | grep TOTAL | awk '{print $4}'`
-        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=coverage -F value=$cov https://vial-dot-data-sandbox-196216.appspot.com/build_badge
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=coverage -F value=$cov https://nautilus-badger.appspot.com/build_badge
       env:
         PYTHONPATH: /home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway/src/opt/app
     - name: Get pylint note
       run: |
         pip install pylint
         pl=`pylint $(pwd)/**/*.py --disable=no-member | grep "Your code has been rated at " | awk '{print $7}'`
-        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=pylint -F value=$pl https://vial-dot-data-sandbox-196216.appspot.com/build_badge
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=pylint -F value=$pl https://nautilus-badger.appspot.com/build_badge
       env:
         PYTHONPATH: /home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway
     - name: Get cyclomatic complexity
       run: |
         pip install radon
         rad=`radon cc --average . | tail -1 | awk '{print $3}'`
-        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=complexity -F value=$rad https://vial-dot-data-sandbox-196216.appspot.com/build_badge 
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=complexity -F value=$rad https://nautilus-badger.appspot.com/build_badge 
     - name: Get leaks from gitleaks
       run: |
         leaks=`docker run --rm --name gitleaks -v $(pwd):/code/ zricethezav/gitleaks --repo-path=/code/ -v --config=/code/gitleaks.toml | grep 'leaks detected' | awk '{print $2}'`
         if [[ $leaks -eq "No" ]]; then leaks="0"; fi
-        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=gitleaks -F value=$leaks https://vial-dot-data-sandbox-196216.appspot.com/build_badge
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=gitleaks -F value=$leaks https://nautilus-badger.appspot.com/build_badge
     - name: Checkout Wiki
       uses: actions/checkout@v2
       with:
@@ -81,7 +81,7 @@ jobs:
         persist-credentials: true
     - name: Update Wiki
       run : |
-        sed -r "s/\.\/docs\/(.*)\.md/\.\/\1/g" README.md > ./docs/Home.md
+        sed -r "s/\.\/docs\/(.*)\.md/\.\/\1/g" README.md > ./docs/# - Home.md
         rm -f ./nautilus-sftp-gateway.wiki/*.md
         cp -r ./docs/ ./nautilus-sftp-gateway.wiki/
         cd nautilus-sftp-gateway.wiki/
