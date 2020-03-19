@@ -1,6 +1,6 @@
 
 This step requires steps :
-- [1 - Environment configuration](./docs/1 - Environment configuration.md)
+- [1 - Environment configuration](./docs/1-EnvironmentConfiguration.md)
 
 
 #### SSH Public Key

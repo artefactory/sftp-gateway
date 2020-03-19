@@ -33,13 +33,13 @@ The container does not contain any credentials, they must be provided at deploym
 
 ## Table of contents
 
-- [0 - Installation](./docs/0 - Installation.md)
-- [1 - Environment configuration](./docs/1 - Environment configuration.md)
-- [2 - Keys Generation](./docs/2 - Keys Generation.md)
-- [3 - Cloud configuration](./docs/3 - Cloud configuration.md)
-- [4 - Docker configuration](./docs/4 - Docker configuration.md)
-- [5 - Cluster configuration](./docs/5 - Cluster configuration.md)
-- [6 - SFTP connection](./docs/6 - SFTP connection.md)
+- [0 - Installation](./docs/0-Installation.md)
+- [1 - Environment configuration](./docs/1-EnvironmentConfiguration.md)
+- [2 - Keys generation](./docs/2-KeysGeneration.md)
+- [3 - Cloud configuration](./docs/3-CloudConfiguration.md)
+- [4 - Docker configuration](./docs/4-DockerConfiguration.md)
+- [5 - Cluster configuration](./docs/5-ClusterConfiguration.md)
+- [6 - SFTP connection](./docs/6-SFTPConnection.md)
 
 ## Tutorial
 
