@@ -1,4 +1,8 @@
 radon
 pytest
 pytest-cov
+pystache
 google-api-python-client
+click
+python-dotenv[cli]
+pyyaml

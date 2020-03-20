@@ -17,4 +17,4 @@ For Kubernetes:
 
 - Run `pip install -r requirements.txt -r dev-requirements.txt` before trying to build/configure anything.
 - Run `export ENV=[NAME OF YOUR ENVIRONMENT]`
-- Create an env file for your configuration with the following name `./env/${ENV}` (see next step [Environment Configuration](./docs/1 - Environment configuration.md))
+- Create an env file for your configuration with the following name `./env/${ENV}` (see next step [Environment Configuration](./1-EnvironmentConfiguration.md))

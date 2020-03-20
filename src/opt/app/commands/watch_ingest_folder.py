@@ -20,8 +20,8 @@
 from typing import List
 
 import os
-
-from commands.upload_file import upload_file
+from concurrent.futures import ThreadPoolExecutor
+from commands.upload_file import Uploader
 from inotify_simple import INotify, flags, Event
 from loguru import logger
 
@@ -37,6 +37,7 @@ class FileWatcher:
         users (dict): Description
         watch_descriptors (dict): Description
         watched_flags (int): Description
+        uploader (Uploader): Description
     """
 
     def __init__(self):
@@ -47,6 +48,7 @@ class FileWatcher:
         self.directories = {}
         self.watch_descriptors = {}
         self.users = {}
+        self.uploader = Uploader()
         for user in config.USERS:
             watch_descriptor = self.inotify.add_watch(user["APP_INGEST_DIR"], self.watched_flags)
             self.directories[watch_descriptor] = user["APP_INGEST_DIR"]
@@ -56,10 +58,12 @@ class FileWatcher:
         while True:
             events = self.inotify.read(read_delay=1000)
             all_events = self.get_all_events(events)
-            for event in all_events:
-                path = os.path.join(self.directories[event.wd], event.name)
-                upload_file(path)
-                os.remove(path)
+            with ThreadPoolExecutor(max_workers=None) as executor:
+                for event in all_events:
+                    executor.submit(
+                        self.uploader.upload_file,
+                        os.path.join(self.directories[event.wd], event.name)
+                    )
             for user in config.USERS:
                 self.delete_subdirectories_if_empty(user["APP_INGEST_DIR"])
 
