@@ -19,7 +19,8 @@
 """
 import os
 import glob
-from commands.upload_file import upload_file
+from concurrent.futures import ThreadPoolExecutor
+from commands.upload_file import Uploader
 from loguru import logger
 import config
 
@@ -28,9 +29,10 @@ def move_existing():
     """Summary
     """
     logger.info("Moving existing files")
-
-    for user in config.USERS:
-        existing_files = glob.glob(os.path.join(user["APP_INGEST_DIR"], "*"))
-        for file in existing_files:
-            upload_file(file)
-            os.remove(file)
+    uploader = Uploader()
+    with ThreadPoolExecutor(max_workers=None) as executor:
+        for user in config.USERS:
+            existing_files = glob.glob(os.path.join(user["APP_INGEST_DIR"], "*"))
+            for file in existing_files:
+                executor.submit(uploader.upload_file, file)
+                os.remove(file)

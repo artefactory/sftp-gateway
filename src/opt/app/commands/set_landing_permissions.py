@@ -33,24 +33,14 @@ def set_landing_permissions():
         os.chmod(user['APP_LANDING_DIR'], 0o755)
         for root, dirs, files in os.walk(f"{user['APP_LANDING_DIR']}"):
             for directory in dirs:
-                chown(
+                os.chown(
                     os.path.join(root, directory),
                     int(user["SFTP_UUID"]),
                     int(config.APP_SFTP_GUID)
                 )
             for file in files:
-                chown(
+                os.chown(
                     os.path.join(root, file),
                     int(user["SFTP_UUID"]),
                     int(config.APP_SFTP_GUID)
                 )
-
-
-def chown(path: str, uuid: int, guid: int):
-    """Summary
-    Args:
-        path (str): Description
-        uuid (int): Description
-        guid (int): Description
-    """
-    os.chown(path, uuid, guid)

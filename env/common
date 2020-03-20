@@ -29,3 +29,5 @@ APP_SFTP_UUID=9000
 APP_LANDING_BASE=/var/landing
 # A comma separated list of patterns to use to exclude files from uploading (uses POSX patterns, not regex)
 APP_LANDING_TEMP_PATTERNS=*.tmp,*.ssh*,*.cache*
+# if this directive is set to 1, the files are not removed from the SFTP after upload
+APP_PERSIST_FILES=0

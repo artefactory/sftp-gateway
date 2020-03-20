@@ -128,7 +128,7 @@ credentials: create_ssh_host_keys create_ssh_keys create_services_credentials
 
 
 .PHONY: create_services_credentials
-create_services_credentials: create_gcp_service_account_keys create_azure_service_principals create_aws_service_accounts create_alibaba_access_keys
+create_services_credentials: create_gcp_service_account_keys create_azure_service_principals create_aws_service_accounts create_alicloud_access_keys
 
 .PHONY: create_gcp_service_accounts
 create_gcp_service_account_keys: credentials_dir
@@ -142,7 +142,7 @@ create_azure_service_principals:
 create_aws_service_accounts:
 	#TODO
 
-.PHONY: create_alibaba_access_keys
+.PHONY: create_alicloud_access_keys
     #TODO
 
 
