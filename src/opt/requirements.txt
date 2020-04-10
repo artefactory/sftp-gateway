@@ -1,6 +1,6 @@
-pystache
-loguru
-inotify-simple
-google-cloud-storage
-google-auth
-google-auth-httplib2
+pystache == 0.5.4
+loguru == 0.4.1
+inotify-simple == 1.3.3
+google-cloud-storage == 1.26.0
+google-auth == 1.11.2
+google-auth-httplib2 == 0.0.3

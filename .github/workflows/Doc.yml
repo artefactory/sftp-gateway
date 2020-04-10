@@ -67,7 +67,7 @@ jobs:
       run: |
         pip install radon
         rad=`radon cc --average . | tail -1 | awk '{print $3}'`
-        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=complexity -F value=$rad https://nautilus-badger.appspot.com/build_badge 
+        curl -X POST -F repo_name=${{ github.repository }} -F badge_name=complexity -F value=$rad https://nautilus-badger.appspot.com/build_badge
     - name: Get leaks from gitleaks
       run: |
         leaks=`docker run --rm --name gitleaks -v $(pwd):/code/ zricethezav/gitleaks --repo-path=/code/ -v --config=/code/gitleaks.toml | grep 'leaks detected' | awk '{print $2}'`
@@ -88,6 +88,7 @@ jobs:
         git config --global user.email "actions@github.com"
         git config --global user.name "GitHub-Actions"
         git add *
+        git add -u
         git diff-index --quiet HEAD || git commit -m "[DOC] Updated wiki from GitHub actions"
         git push
         cd ..

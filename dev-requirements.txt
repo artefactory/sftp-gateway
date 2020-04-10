@@ -1,8 +1,8 @@
-radon
-pytest
-pytest-cov
-pystache
-google-api-python-client
-click
-python-dotenv[cli]
-pyyaml
+radon == 4.1.0
+pytest == 5.3.5
+pytest-cov == 2.8.1
+pystache == 0.5.4
+google-api-python-client == 1.7.11
+click == 7.0
+python-dotenv == 0.11.0
+pyyaml == 5.3
