@@ -18,9 +18,8 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import os
-
+import shutil
 from loguru import logger
-
 import config
 
 
@@ -29,18 +28,18 @@ def set_landing_permissions():
     """
     logger.info("Setting landing directory permissions")
 
-    for user in config.USERS:
-        os.chmod(user['APP_LANDING_DIR'], 0o755)
-        for root, dirs, files in os.walk(f"{user['APP_LANDING_DIR']}"):
+    for user, _ in config.PROJECT_CONFIG["USERS"].items():
+        os.chmod(os.path.join(config.APP_LANDING_DIR, user), 0o755)
+        for root, dirs, files in os.walk(f"{os.path.join(config.APP_LANDING_DIR, user)}"):
             for directory in dirs:
-                os.chown(
+                shutil.chown(
                     os.path.join(root, directory),
-                    int(user["SFTP_UUID"]),
+                    user,
                     int(config.APP_SFTP_GUID)
                 )
             for file in files:
-                os.chown(
+                shutil.chown(
                     os.path.join(root, file),
-                    int(user["SFTP_UUID"]),
+                    user,
                     int(config.APP_SFTP_GUID)
                 )

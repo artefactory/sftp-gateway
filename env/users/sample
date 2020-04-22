@@ -1,9 +1,0 @@
-# The username that will be allowed to connect to the SFTP server
-APP_USERNAME=sample
-
-################## Uncomment this part if the user can upload files to GCS buckets ##################
-#  GCP_BUCKET_PROJECT_IDS=${GCP_PROJECT_ID},<INSERT_OTHER_GCP_PROJECT_ID>,...  # can be modified
-#  # A comma separated list of GCS Bucket names that will be the destinations for file replication
-#  # Each index of this list matches index of the GCP_BUCKET_PROJECT_IDS list to get the bucket's Project ID
-#  APP_GCS_BUCKETS=<INSERT_GCS_BUCKET_NAME_HERE>,<INSERT_OTHER_GCS_BUCKET_NAME_HERE>,...
-#####################################################################################################

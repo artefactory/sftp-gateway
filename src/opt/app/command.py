@@ -18,7 +18,6 @@
 """Summary
 """
 import subprocess
-
 from loguru import logger
 
 
@@ -26,7 +25,7 @@ def run(command: str, quiet: bool = False):
     """Summary
 
     Args:
-        command (str): Description
+        command (List[str]): Description
         quiet (bool, optional): Description
 
     Returns:
@@ -35,9 +34,8 @@ def run(command: str, quiet: bool = False):
     Raises:
         Exception: Description
     """
-    logger.debug("Running command {}".format(command))
 
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     process.wait()
 
@@ -47,11 +45,11 @@ def run(command: str, quiet: bool = False):
 
         for line in process.stderr:
             logger.error(line)
+        logger.debug(
+            "Command returned exit code - {context}",
+            context={"exit_code": process.returncode, "command": command},
+        )
 
-    logger.debug(
-        "Command returned exit code - {context}",
-        context={"exit_code": process.returncode, "command": command},
-    )
     if process.returncode != 0:
         raise Exception("Error running command: {}".format(command))
 

@@ -6,3 +6,5 @@ google-api-python-client == 1.7.11
 click == 7.0
 python-dotenv == 0.11.0
 pyyaml == 5.3
+boto3 == 1.12.41
+awscli == 1.18.41

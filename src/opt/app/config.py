@@ -18,38 +18,43 @@
 """Summary
 
 Attributes:
-    APP_SFTP_AUTHORIZEDKEYS_KEYPATH (str): Description
-    ENVIRONMENT_FILE (str): Description
-    ENVIRONMENT_VARIABLE_PREFIXES (list): Description
-    FORBIDDEN_USERNAMES (list): Description
+    APP_CONFIG_DIR (str): Description
+    APP_LANDING_DIR (str): Description
+    APP_LANDING_TEMP_PATTERNS (str): Description
+    APP_SECRETS_DIR (str): Description
+    APP_SFTP_AUTHORIZEDKEYS_DIR (str): Description
+    APP_SFTP_GUID (int): Description
+    FORBIDDEN_USERNAMES (List): Description
+    PROJECT_CONFIG (TYPE): Description
+    PUBLICKEY_NAME (str): Description
     SSH_DIR (str): Description
     SSHD_CONFIG_FILE (str): Description
-    TEMPLATE_DIRECTORY (str): Description
+    TEMPLATE_DIRECTORY (TYPE): Description
 """
 import os
-import json
+import yaml
 
-for variable, value in os.environ.items():
-    locals()[variable.strip()] = value.strip()
 
+SSH_DIR = "/etc/ssh"
+APP_SFTP_AUTHORIZEDKEYS_DIR = "/etc/ssh/authorized-keys"
+APP_CONFIG_DIR = "/var/run/config/"
+APP_SECRETS_DIR = "/var/run/secrets/"
+APP_LANDING_DIR = "/var/landing"
+SSHD_CONFIG_FILE = "/etc/ssh/sshd_config"
+PUBLICKEY_NAME = "rsa-key.pub"
+
+PROJECT_CONFIG = yaml.load(
+    open(f"{os.path.join(APP_CONFIG_DIR, os.environ['APP_NAME'])}.yaml", "r"),
+    Loader=yaml.FullLoader
+)
 
 FORBIDDEN_USERNAMES = [u.split(':')[0] for u in open('/etc/passwd', 'r').read().split()]
 
-INPUT_CONFIG = locals().copy()
-
-USERS = []
-for key, value in INPUT_CONFIG.items():
-    if key[:len('SFTP_USER_')] == "SFTP_USER_":
-        USERS += [json.loads(INPUT_CONFIG[key].strip("'"))]
-
-
 TEMPLATE_DIRECTORY = os.path.join(os.path.dirname(__file__), 'templates')
 
-SSH_DIR = "/etc/ssh"
-SSHD_CONFIG_FILE = "/etc/ssh/sshd_config"
+APP_SFTP_GUID = 9000
 
-ENVIRONMENT_FILE = "/etc/environment"
-ENVIRONMENT_VARIABLE_PREFIXES = ['APP_', 'GCP_']
+APP_LANDING_TEMP_PATTERNS = "*.tmp,*.ssh*,*.cache*"
 
 
 def get_template(template: str):

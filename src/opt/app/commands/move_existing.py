@@ -31,8 +31,8 @@ def move_existing():
     logger.info("Moving existing files")
     uploader = Uploader()
     with ThreadPoolExecutor(max_workers=None) as executor:
-        for user in config.USERS:
-            existing_files = glob.glob(os.path.join(user["APP_INGEST_DIR"], "*"))
+        for user, _ in config.PROJECT_CONFIG["USERS"].items():
+            existing_files = glob.glob(os.path.join(config.APP_LANDING_DIR, user, 'ingest', "*"))
             for file in existing_files:
                 executor.submit(uploader.upload_file, file)
                 os.remove(file)

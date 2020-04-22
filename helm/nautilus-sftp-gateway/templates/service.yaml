@@ -18,19 +18,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.app.service.name }}
+  name: {{ .Values.APP.NAME }}-service
   namespace: sftp-gateway
-  {{ if eq .Values.k8s.managed.cloud "GKE" -}}
-  {{ if eq .Values.app.service.internal "1" -}}
+  {{ if eq .Values.K8S.MANAGED.CLOUD "GKE" -}}
+  {{ if eq .Values.APP.SERVICE_INTERNAL true -}}
   annotations:
     cloud.google.com/load-balancer-type: "Internal"
   {{ end }}
   {{ end}}
 spec:
   type: LoadBalancer
-  loadBalancerIP: "{{ .Values.app.service.ip }}"
+  loadBalancerIP: "{{ .Values.APP.SERVICE_IP }}"
   ports:
-  - port: {{ .Values.app.service.port }}
-    targetPort: {{ .Values.app.sftp.port }}
+  - port: {{ .Values.APP.SERVICE_PORT }}
+    targetPort: {{ .Values.APP.SERVICE_PORT }}
   selector:
-    app: {{ .Values.app.name }}
+    app: {{ .Values.APP.NAME }}

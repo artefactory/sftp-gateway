@@ -33,12 +33,12 @@ def create_sftp_config():
     context = {
         "authorized_keys_files": " ".join(
             [
-                os.path.join(config.APP_SFTP_AUTHORIZEDKEYS_DIR, user['APP_USERNAME'])
-                for user in config.USERS
+                os.path.join(config.APP_SFTP_AUTHORIZEDKEYS_DIR, user)
+                for user, userdata in config.PROJECT_CONFIG["USERS"].items()
             ]
         ),
-        "users": " ".join([user["APP_USERNAME"] for user in config.USERS]),
-        "ssh_port": config.APP_SFTP_PORT
+        "users": " ".join([user for user, userdata in config.PROJECT_CONFIG["USERS"].items()]),
+        "ssh_port": config.PROJECT_CONFIG["APP"]["SERVICE_PORT"]
     }
 
     render_config = renderer.render_path(config.get_template("sshd_config"), context)

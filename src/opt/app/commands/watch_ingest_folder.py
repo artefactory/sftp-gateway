@@ -1,5 +1,3 @@
-"""Summary
-"""
 # GNU Lesser General Public License v3.0 only
 # Copyright (C) 2020 Artefact
 # licence-information@artefact.com
@@ -17,6 +15,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+"""Summary
+"""
 from typing import List
 
 import os
@@ -49,10 +49,17 @@ class FileWatcher:
         self.watch_descriptors = {}
         self.users = {}
         self.uploader = Uploader()
-        for user in config.USERS:
-            watch_descriptor = self.inotify.add_watch(user["APP_INGEST_DIR"], self.watched_flags)
-            self.directories[watch_descriptor] = user["APP_INGEST_DIR"]
-            self.users[watch_descriptor] = user["APP_USERNAME"]
+        for user, _ in config.PROJECT_CONFIG["USERS"].items():
+            watch_descriptor = self.inotify.add_watch(
+                os.path.join(config.APP_LANDING_DIR, user, 'ingest'),
+                self.watched_flags
+            )
+            self.directories[watch_descriptor] = os.path.join(
+                config.APP_LANDING_DIR,
+                user,
+                'ingest'
+            )
+            self.users[watch_descriptor] = user
             self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
             logger.info("Watching ingestion folder")
         while True:
@@ -64,8 +71,10 @@ class FileWatcher:
                         self.uploader.upload_file,
                         os.path.join(self.directories[event.wd], event.name)
                     )
-            for user in config.USERS:
-                self.delete_subdirectories_if_empty(user["APP_INGEST_DIR"])
+            for user, _ in config.PROJECT_CONFIG["USERS"].items():
+                self.delete_subdirectories_if_empty(
+                    os.path.join(config.APP_LANDING_DIR, user, 'ingest')
+                )
 
     def delete_subdirectories_if_empty(self, dirname: str):
         """Summary
@@ -102,11 +111,11 @@ class FileWatcher:
                     deleted = True
             if is_dir and not deleted:
                 watch_descriptor = self.inotify.add_watch(
-                    os.path.join(config.APP_LANDING_BASE, event_user, "ingest", event.name),
+                    os.path.join(config.APP_LANDING_DIR, event_user, "ingest", event.name),
                     self.watched_flags
                 )
                 self.directories[watch_descriptor] = os.path.join(
-                    config.APP_LANDING_BASE, event_user, "ingest", event.name
+                    config.APP_LANDING_DIR, event_user, "ingest", event.name
                 )
                 self.users[watch_descriptor] = event_user
                 self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
@@ -126,8 +135,7 @@ class FileWatcher:
             self,
             watch_descriptor: int,
             all_events: List[Event],
-            event_user: str
-        ) -> List[Event]:
+            event_user: str) -> List[Event]:
         """Summary
         Args:
             watch_descriptor (int): Description

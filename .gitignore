@@ -1,17 +1,26 @@
-credentials/*
-secrets/*
-config/*
 **/*.pyc
 
 helm/nautilus-sftp-gateway/secrets/*
 helm/nautilus-sftp-gateway/values.yaml
 helm/nautilus-sftp-gateway/values/*
 
-env/*
-!env/users/sample
-!env/common
-!env/sample
-!env/config/
+credentials/*
+!credentials/example/internal/ssh-host-dsa-key
+!credentials/example/internal/ssh-host-dsa-key.pub
+!credentials/example/internal/ssh-host-edcsa-key
+!credentials/example/internal/ssh-host-edcsa-key.pub
+!credentials/example/internal/ssh-host-ed25519-key
+!credentials/example/internal/ssh-host-ed25519-key.pub
+!credentials/example/internal/ssh-host-rsa-key
+!credentials/example/internal/ssh-host-rsa-key.pub
+!credentials/example/users/fake-sftp-user/aws/000000000000.csv
+!credentials/example/users/fake-sftp-user/google/fake-project.json
+!credentials/example/users/fake-sftp-user/password
+!credentials/example/users/fake-sftp-user/rsa-key
+!credentials/example/users/fake-sftp-user/rsa-key.pub
+
+config/*
+!config/example.yaml
 
 .vscode
 .DS_Store

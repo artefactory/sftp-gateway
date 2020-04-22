@@ -26,7 +26,7 @@ import command
 import config
 
 
-def create_user():
+def create_users():
     """Summary
 
     Raises:
@@ -34,31 +34,30 @@ def create_user():
     """
     logger.info("Creating user")
 
-    for user in config.USERS:
+    for user, userdata in config.PROJECT_CONFIG["USERS"].items():
         if user in config.FORBIDDEN_USERNAMES:
-            raise Exception(f"Username {user['APP_USERNAME']} value is invalid")
+            raise Exception(f"Username {user} value is invalid")
 
-        create_user_command = [
-            "useradd",
-            "--no-create-home",
-            "--no-user-group",
-            "--uid",
-            f"{user['SFTP_UUID']}",
-            "--gid",
-            f"{config.APP_SFTP_GUID}",
-            "-p",
-            f"{generate_pass()}",
-            user['APP_USERNAME'],
-        ]
+        create_user_command = (
+            f"useradd --no-create-home --no-user-group "
+            f"--gid {config.APP_SFTP_GUID} {user}"
+        )
 
-        change_user_directory_command = [
-            "usermod",
-            "-d",
-            f"{user['APP_LANDING_DIR']}",
-            f"{user['APP_USERNAME']}"
-        ]
+        password = open(os.path.join(
+            config.APP_SECRETS_DIR,
+            config.PROJECT_CONFIG["APP"]["NAME"],
+            'users',
+            user,
+            'password'
+        ), 'r').read().split('\n')[0]
+        change_password_command = f"yes {password} | passwd {user}"
+
+        change_user_directory_command = (
+            f"usermod -d {os.path.join(config.APP_LANDING_DIR, user)} {user}"
+        )
 
         command.run(create_user_command)
+        command.run(change_password_command, quiet=True)
         command.run(change_user_directory_command)
 
 
