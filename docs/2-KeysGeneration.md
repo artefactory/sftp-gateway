@@ -1,5 +1,5 @@
 
-[Home](./#-Home.md)
+[Home](./*-Home.md)
 
 This step requires steps :
 - [1 - Environment configuration](./1-EnvironmentConfiguration.md)
