@@ -18,13 +18,25 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.app.configmap.name }}
+  name: {{ .Values.APP.NAME }}-config
   namespace: sftp-gateway
   labels:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 data:
-  {{ range $key, $value := .Values.environment -}}
-  {{$key}}: {{$value | quote}}
-  {{ end -}}
+  {{ .Values.APP.NAME }}: |
+  {{ $.Files.Get (printf "values/%s.yaml" .Values.ENV) | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.APP.NAME }}-environment-config
+  namespace: sftp-gateway
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+data:
+  ENV: {{ .Values.ENV }}
+  APP_NAME: {{ .Values.APP.NAME }}

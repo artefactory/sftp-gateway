@@ -18,9 +18,8 @@
 """Summary
 """
 import os
-
+import shutil
 from loguru import logger
-
 import config
 
 
@@ -29,21 +28,30 @@ def create_authorized_key():
     """
     logger.info("Creating authorized key")
 
-    for user in config.USERS:
-        if not os.path.exists(os.path.join(user['APP_LANDING_DIR'], ".ssh")):
-            os.mkdir(os.path.join(user['APP_LANDING_DIR'], ".ssh"))
-        os.chmod(os.path.join(user['APP_LANDING_DIR'], ".ssh"), 0o700)
-        os.chown(
-            os.path.join(user['APP_LANDING_DIR'], ".ssh"),
-            int(user["SFTP_UUID"]),
+    for user, _ in config.PROJECT_CONFIG["USERS"].items():
+        if not os.path.exists(os.path.join(config.APP_LANDING_DIR, user, ".ssh")):
+            os.mkdir(os.path.join(config.APP_LANDING_DIR, user, ".ssh"))
+        os.chmod(os.path.join(config.APP_LANDING_DIR, user, ".ssh"), 0o700)
+        shutil.chown(
+            os.path.join(config.APP_LANDING_DIR, user, ".ssh"),
+            user,
             int(config.APP_SFTP_GUID)
         )
-        with open(os.path.join(user['APP_LANDING_DIR'], ".ssh", "authorized_keys"), 'w') as handle:
-            with open(user['APP_SFTP_PUBLICKEY_PATH'], 'r') as reader:
+        with open(os.path.join(
+                config.APP_LANDING_DIR,
+                user,
+                ".ssh",
+                "authorized_keys"), 'w') as handle:
+            with open(os.path.join(
+                    config.APP_SECRETS_DIR,
+                    config.PROJECT_CONFIG['APP']['NAME'],
+                    "users",
+                    user,
+                    config.PUBLICKEY_NAME), 'r') as reader:
                 handle.write(reader.read())
-        os.chmod(os.path.join(user['APP_LANDING_DIR'], ".ssh", "authorized_keys"), 0o600)
-        os.chown(
-            os.path.join(user['APP_LANDING_DIR'], ".ssh", "authorized_keys"),
-            int(user["SFTP_UUID"]),
+        os.chmod(os.path.join(config.APP_LANDING_DIR, user, ".ssh", "authorized_keys"), 0o600)
+        shutil.chown(
+            os.path.join(config.APP_LANDING_DIR, user, ".ssh", "authorized_keys"),
+            user,
             int(config.APP_SFTP_GUID)
         )

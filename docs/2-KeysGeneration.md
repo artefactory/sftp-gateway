@@ -1,4 +1,6 @@
 
+[Home](./#-Home.md)
+
 This step requires steps :
 - [1 - Environment configuration](./1-EnvironmentConfiguration.md)
 
@@ -7,13 +9,13 @@ This step requires steps :
 
 The SFTP server only accepts public/private key authentication, you need to create or provide a public/private key pair and mount the public key in the container as a secret.
 
-You can generate the public/private key pairs for all users added in the ./env/users/ folder by running the command:
+You can generate the password and public/private key pair for all users added in the `USERS` configuration variable of the YAML file by running the command:
 
 ```shell
 make create_ssh_keys
 ```
 
-The keys will be placed in the `./credentials/${ENV}/users/${APP_USERNAME}/` folder.
+The keys will be placed in the `./credentials/${ENV}/users/${APP_USERNAME}/` folder. The generated files will be `rsa-key`, `rsa-key.pub` and `password`. Be sure to follow this convention if you want to provide you own keys and passwords.
 
 
 #### SSH Host Keys (Optional)

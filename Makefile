@@ -25,16 +25,11 @@ else
 	environment = ${ENV}
 endif
 
-# Generate complete config files
-ifndef SKIP_CONFIG
-	CONFIG := $(shell ENV="$(environment)" SKIP_CONFIG=1 make generate_config)
-	GCLOUD_USER=$(shell gcloud config list account --format "value(core.account)")
-
-	ENV_FILE = config/${environment}
-
-	include ${ENV_FILE}
-endif
-
+ENV_FILE = config/${environment}.yaml
+APP_NAME = $$(cat ${ENV_FILE} | awk '/  NAME:/ {print $$2}')
+APP_HOST_PORT = $$(cat ${ENV_FILE} | awk '/HOST_PORT:/ {print $$2}')
+APP_SERVICE_PORT = $$(cat ${ENV_FILE} | awk '/SERVICE_PORT:/ {print $$2}')
+APP_DOCKER_URL = $$(cat ${ENV_FILE} | awk '/DOCKER_URL:/ {print $$2}')
 
 .PHONY: clean
 clean:
@@ -42,33 +37,31 @@ clean:
 
 .PHONY: clean_config
 clean_config:
-	rm -rf config
 	rm -rf helm/secrets
 	rm -rf helm/values
 
 .PHONY: docker_publish
-docker_publish: docker_build docker_configure_auth
+docker_publish: docker_build setup_container_registry_access
 	docker push ${APP_DOCKER_URL}
 
-.PHONY: docker_configure_auth
-docker_configure_auth:
-	ENV=${environment} 
-
 .PHONY: docker_build
-docker_build: clean generate_config credentials
-	build_args=$$(for i in $$(cat ${ENV_FILE}); do out+="--build-arg $${i} " ; done; echo $${out};out="") && \
-	docker build --rm -t ${APP_DOCKER_URL} $${build_args} .
+docker_build: clean credentials
+	docker build --rm -t ${APP_DOCKER_URL} .
 
 .PHONY: docker_run
-docker_run: generate_config credentials docker_build
+docker_run: credentials docker_build
 	docker run --privileged -a STDIN -a STDERR -a STDOUT -it \
-						 --rm \
-						 --env-file ${ENV_FILE} \
-						 -v $$(pwd)/credentials/${environment}:${APP_SECRETS_DIR} \
-						 -p ${APP_HOST_PORT}:${APP_SFTP_PORT} \
-						${APP_DOCKER_URL}
+		 --rm \
+		 --env ENV=$$(cat ${ENV_FILE} | awk '/ENV:/ {print $$2}') \
+		 --env APP_NAME=${APP_NAME} \
+		 -v $$(pwd)/credentials/${environment}:/var/run/secrets/${APP_NAME}/ \
+		 -v $$(pwd)/config/${environment}.yaml:/var/run/config/${APP_NAME}.yaml \
+		 -p ${APP_HOST_PORT}:${APP_SERVICE_PORT} \
+		${APP_DOCKER_URL}
 
-MK_CREDENTIALS_DIR = credentials/${environment}
+
+MK_CREDENTIALS_ROOT_DIR = credentials
+MK_CREDENTIALS_DIR = ${MK_CREDENTIALS_ROOT_DIR}/${environment}
 MK_CREDENTIALS_INTERNAL_DIR = ${MK_CREDENTIALS_DIR}/internal
 MK_CREDENTIALS_USERS_DIR = ${MK_CREDENTIALS_DIR}/users
 
@@ -79,14 +72,7 @@ create_ssh_keys: credentials_dir create_user_keys
 
 .PHONY: create_user_keys
 create_user_keys:
-	for user in env/users/*; do \
-	    if [[ ! -d ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"} ]]; then \
-	        mkdir ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"} ; \
-	    fi ; \
-	    if [[ ! -f ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"}/rsa-key ]]; then \
-	    	ssh-keygen -N "" -f ${MK_CREDENTIALS_USERS_DIR}/$${user#"env/users"}/rsa-key ; \
-	    fi ; \
-	done;
+	MK_CREDENTIALS_USERS_DIR=${MK_CREDENTIALS_USERS_DIR} python bin/create_user_keys.py
 
 
 MK_APP_SFTP_HOSTKEY_ECDSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh-host-ecdsa-key
@@ -111,7 +97,11 @@ $(MK_APP_SFTP_HOSTKEY_RSA):
 
 
 .PHONY: credentials_dir
-credentials_dir: $(MK_CREDENTIALS_DIR) $(MK_CREDENTIALS_INTERNAL_DIR) $(MK_CREDENTIALS_USERS_DIR)
+credentials_dir: $(MK_CREDENTIALS_ROOT_DIR) $(MK_CREDENTIALS_DIR) $(MK_CREDENTIALS_INTERNAL_DIR) $(MK_CREDENTIALS_USERS_DIR)
+
+
+$(MK_CREDENTIALS_ROOT_DIR):
+	mkdir -p $(MK_CREDENTIALS_ROOT_DIR)
 
 $(MK_CREDENTIALS_DIR):
 	mkdir -p $(MK_CREDENTIALS_DIR)
@@ -126,7 +116,6 @@ $(MK_CREDENTIALS_USERS_DIR):
 .PHONY: credentials
 credentials: create_ssh_host_keys create_ssh_keys create_services_credentials
 
-
 .PHONY: create_services_credentials
 create_services_credentials: create_gcp_service_account_keys create_azure_service_principals create_aws_service_accounts create_alicloud_access_keys
 
@@ -138,19 +127,18 @@ create_gcp_service_account_keys: credentials_dir
 create_azure_service_principals:
 	#TODO
 
-.PHONY: create_aws_service_accounts
+.PHONY: create_aws_access_keys
 create_aws_service_accounts:
-	#TODO
+	python ./bin/aws.py create-aws-access-keys
 
 .PHONY: create_alicloud_access_keys
     #TODO
 
+MK_CONFIG_DIR = config
+MK_CONFIG = ${MK_CONFIG_DIR}/${environment}.yaml
 
-MK_GENERATED_CONFIG = config/${environment}
-
-.PHONY: generate_config
-generate_config: env/${environment} env/common
-	ENV=${environment} python ./bin/configure.py
+$(MK_CONFIG_DIR):
+	mkdir -p $(MK_CONFIG_DIR)
 
 MK_HELM_CONFIG = helm/nautilus-sftp-gateway/values/${environment}.yaml
 MK_HELM_SECRETS = helm/nautilus-sftp-gateway/secrets
@@ -161,11 +149,11 @@ helm_generate_values: credentials $(MK_HELM_CONFIG)
 helm/nautilus-sftp-gateway/values:
 	mkdir -p helm/nautilus-sftp-gateway/values
 
-$(MK_HELM_CONFIG): $(MK_GENERATED_CONFIG) $(MK_CREDENTIALS_DIR) helm/nautilus-sftp-gateway/values
+$(MK_HELM_CONFIG): $(MK_CONFIG) credentials helm/nautilus-sftp-gateway/values
 	rm -rf $(MK_HELM_SECRETS)
 	mkdir -p $(MK_HELM_SECRETS)
 	cp -r $(MK_CREDENTIALS_DIR) $(MK_HELM_SECRETS)
-	python ./bin/env_to_values.py --env-file $(MK_GENERATED_CONFIG) > $(MK_HELM_CONFIG)
+	cp config/${environment}.yaml > $(MK_HELM_CONFIG)
 
 .PHONY: helm_setup
 helm_setup:

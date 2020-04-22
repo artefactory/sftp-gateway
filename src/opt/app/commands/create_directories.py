@@ -29,9 +29,9 @@ def create_directories():
     """
     logger.info("Creating directories")
 
-    for user in config.USERS:
-        safe_make_dir(f"{user['APP_LANDING_DIR']}")
-        safe_make_dir(f"{user['APP_INGEST_DIR']}")
+    for user, _ in config.PROJECT_CONFIG["USERS"].items():
+        safe_make_dir(f"{os.path.join(config.APP_LANDING_DIR, user)}")
+        safe_make_dir(f"{os.path.join(config.APP_LANDING_DIR, user, 'ingest')}")
 
 
 def safe_make_dir(path: str):

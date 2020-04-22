@@ -17,8 +17,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #!/bin/sh
 
-source config/${ENV}
-
+APP_DOCKER_REGISTRY=$(cat config/${ENV}.yaml | awk '/DOCKER_REGISTRY:/ {print $2}')
 config_exists=$(cat ~/.docker/config.json | grep $APP_DOCKER_REGISTRY)
 if [[ "${config_exists}" != "" ]]
 then
@@ -27,7 +26,7 @@ else
 	echo "
 Please setup your docker configuration by using one of the following tools
 
-	Google Cloud Platform :
+	Google Cloud Platform :@
 	https://cloud.google.com/sdk/gcloud/reference/auth/configure-docker
 	gcloud auth configure-docker REGISTRY_NAME
 
