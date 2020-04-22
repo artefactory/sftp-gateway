@@ -1,8 +1,3 @@
-"""Summary
-
-Attributes:
-    CONFIG (dict): Description
-"""
 # GNU Lesser General Public License v3.0 only
 # Copyright (C) 2020 Artefact
 # licence-information@artefact.com
@@ -20,17 +15,20 @@ Attributes:
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+"""Summary
+
+Attributes:
+    CONFIG (dict): Description
+"""
 import os
-import json
 from base64 import b64decode
 from typing import Dict
 import click
 from googleapiclient import discovery, errors
-from bin import render_config
+import yaml
 
 
-CONFIG = {}
-render_config(f"config/{os.environ['ENV']}", CONFIG)
+CONFIG = yaml.load(open(f"config/{os.environ['ENV']}.yaml", "r"), Loader=yaml.FullLoader)
 
 
 @click.group()
@@ -43,23 +41,25 @@ def cli():
 def create_gcp_service_accounts():
     """Summary
     """
-    for user in os.listdir("env/users"):
-        userdata = json.loads(CONFIG[f"SFTP_USER_{user}"])
-        if "gcs_buckets" in userdata:
-            for project_id, user_project_data in userdata["gcs_buckets"].items():
-                set_user_service_account(project_id, user_project_data, user)
+    ask_key_creation = input("Do you want to create user access keys ? (y/n): ")
+    if ask_key_creation in ["y", "Y", "yes", "Yes"]:
+        for user, userdata in CONFIG["USERS"].items():
+            if "GCP_PROJECTS" in userdata:
+                for project_id, _ in userdata["GCP_PROJECTS"].items():
+                    set_user_service_account(project_id, user)
+    else:
+        print("Did not create any user service account...")
 
 
-def set_user_service_account(project_id: str, user_project_data: Dict, user: str):
+def set_user_service_account(project_id: str, user: str):
     """Summary
     Args:
         project_id (str): Description
-        user_project_data (Dict): Description
         user (str): Description
     """
     key_path = (
         f"credentials/{os.environ['ENV']}/users/"
-        f"{user_project_data['GCP_SERVICEACCOUNT_KEY_NAME']}"
+        f"{user}/google/{project_id}.json"
     )
     if not os.path.exists(key_path):
         service_account = None
@@ -68,22 +68,22 @@ def set_user_service_account(project_id: str, user_project_data: Dict, user: str
         try:
             service_account = get_service_account(
                 project_id,
-                user_project_data["GCP_SERVICEACCOUNT_IAM"],
+                f"{user}-sftp@{project_id}.iam.gserviceaccount.com",
                 iam_service
             )
             print(
                 f'Service account already exists for user : '
-                f'{user_project_data["GCP_SERVICEACCOUNT_IAM"]} !'
+                f"{user}-sftp@{project_id}.iam.gserviceaccount.com !"
             )
         except errors.HttpError:
             print(
                 f'Creating service account for user : '
-                f'{user_project_data["GCP_SERVICEACCOUNT_IAM"]} !'
+                f"{user}-sftp@{project_id}.iam.gserviceaccount.com !"
             )
             service_account = create_service_account(
                 project_id,
-                user_project_data["GCP_SERVICEACCOUNT_NAME"],
-                user_project_data["GCP_SERVICEACCOUNT_NAME"],
+                f"{user}-sftp",
+                f"{user}-sftp",
                 iam_service
             )
             print(f"Created service account : {service_account['email']}")
@@ -94,7 +94,7 @@ def set_user_service_account(project_id: str, user_project_data: Dict, user: str
             )
         print(
             f'Creating service account key for user : '
-            f'{user_project_data["GCP_SERVICEACCOUNT_IAM"]} !'
+            f'{user}-sftp !'
         )
         created_key = create_service_account_key(service_account, iam_service)
         key_directory = os.path.join(*key_path.split("/")[:-1])
@@ -107,12 +107,10 @@ def set_user_service_account(project_id: str, user_project_data: Dict, user: str
         print(f"Key already found for project {project_id} and user {user}")
 
 
-
 def get_service_account(
         project_id: str,
         service_account_email: str,
-        iam_service: discovery.Resource
-    ) -> Dict:
+        iam_service: discovery.Resource) -> Dict:
     """Summary
     Args:
         project_id (str): Description
@@ -129,8 +127,7 @@ def get_service_account(
 def add_service_account_policy(
         project_id: str,
         service_account: Dict,
-        resource_manager_service: discovery.Resource
-    ) -> Dict:
+        resource_manager_service: discovery.Resource) -> Dict:
     """Summary
     Args:
         project_id (str): Description
@@ -155,8 +152,7 @@ def add_service_account_policy(
 
 def get_project_policies(
         project_id: str,
-        resource_manager_service: discovery.Resource
-    ) -> Dict:
+        resource_manager_service: discovery.Resource) -> Dict:
     """Summary
     Args:
         project_id (str): Description
@@ -173,8 +169,7 @@ def create_service_account(
         project_id: str,
         name: str,
         display_name: str,
-        iam_service: discovery.Resource
-    ) -> Dict:
+        iam_service: discovery.Resource) -> Dict:
     """Summary
     Args:
         project_id (str): Description
@@ -197,8 +192,7 @@ def create_service_account(
 
 def create_service_account_key(
         service_account: Dict,
-        iam_service: discovery.Resource
-    ) -> Dict:
+        iam_service: discovery.Resource) -> Dict:
     """Summary
     Args:
         service_account (Dict): Description

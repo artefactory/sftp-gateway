@@ -7,12 +7,9 @@ RUN apt-get update && \
     apt-get -y clean
 
 
-ARG APP_SFTP_GUID
-ARG APP_SFTP_AUTHORIZEDKEYS_DIR
+RUN addgroup --gid 9000 sftp-users
 
-RUN addgroup --gid $APP_SFTP_GUID sftp-users
-
-RUN mkdir -p $APP_SFTP_AUTHORIZEDKEYS_DIR && \
+RUN mkdir -p /etc/ssh/authorized-keys && \
     mkdir -p /run/sshd && \
     mkdir -p /var/run/sshd
 

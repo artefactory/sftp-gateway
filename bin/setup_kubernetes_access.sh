@@ -17,7 +17,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #!/bin/sh
 
-source config/${ENV}
+K8S_CLUSTER_NAME=$(cat config/${ENV}.yaml | awk '/CLUSTER_NAME:/ {print $2}')
 context_exists=$(kubectl config use-context ${K8S_CLUSTER_NAME})
 if [[ "${context_exists}" != "" ]]
 then
