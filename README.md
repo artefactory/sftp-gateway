@@ -33,13 +33,13 @@ The container does not contain any credentials, they must be provided at deploym
 
 ## Quick setup
 
-1/ Setup your environment by running `export ENV=dev` (here `dev` for example). Also run the following command : `export PYTHONPATH=$PYTHONPATH:.`
-2/ Fill in your configuration by copying the `./config/example.yaml` into a new `./config/${ENV}.yaml` file and replace the values by the ones you need.
-3/ Add your secrets into the `./credentials/${ENV}` folder or let the project generate them for you.
-4/ Test your configuration by running the following command : `make docker_run`
-5/ Install Tiller on your Kubernetes cluster by running `make helm_setup`, if not already done.
-6/ Generate or copy an existing an IPv4 address that can be used by your Kubernetes cluster in your configuration file under APP -> SERVICE_IP.
-7/ Deploy the SFTP on Kubernetes my running the following command : `make helm_install`
+- 1/ Setup your environment by running `export ENV=dev` (here `dev` for example). Also run the following command : `export PYTHONPATH=$PYTHONPATH:.`
+- 2/ Fill in your configuration by copying the `./config/example.yaml` into a new `./config/${ENV}.yaml` file and replace the values by the ones you need.
+- 3/ Add your secrets into the `./credentials/${ENV}` folder or let the project generate them for you.
+- 4/ Test your configuration by running the following command : `make docker_run`
+- 5/ Install Tiller on your Kubernetes cluster by running `make helm_setup`, if not already done.
+- 6/ Generate or copy an existing an IPv4 address that can be used by your Kubernetes cluster in your configuration file under APP -> SERVICE_IP.
+- 7/ Deploy the SFTP on Kubernetes my running the following command : `make helm_install`
 
 
 ## Table of contents
