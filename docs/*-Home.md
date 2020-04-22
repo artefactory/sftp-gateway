@@ -9,7 +9,7 @@
 
 ## Architecture
 
-![Nautilus SFTP Gateway architecture](./docs/Nautilus_SFTP_Gateway_architecture.png)
+![Nautilus SFTP Gateway architecture](./Nautilus_SFTP_Gateway_architecture.png)
 
 
 This is a Docker image containing a SSH server and an INotify daemon allowing to create a SFTP gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS or other cloud storage services.
@@ -44,12 +44,12 @@ The container does not contain any credentials, they must be provided at deploym
 
 ## Table of contents
 
-- [0 - Installation](./0-Installation)
-- [1 - Environment configuration](./1-EnvironmentConfiguration)
-- [2 - Keys generation](./2-KeysGeneration)
-- [3 - Cloud configuration](./3-CloudConfiguration)
-- [4 - Docker configuration](./4-DockerConfiguration)
-- [5 - Cluster configuration](./5-ClusterConfiguration)
-- [6 - SFTP connection](./6-SFTPConnection)
+- [0 - Installation](./0-Installation.md)
+- [1 - Environment configuration](./1-EnvironmentConfiguration.md)
+- [2 - Keys generation](./2-KeysGeneration.md)
+- [3 - Cloud configuration](./3-CloudConfiguration.md)
+- [4 - Docker configuration](./4-DockerConfiguration.md)
+- [5 - Cluster configuration](./5-ClusterConfiguration.md)
+- [6 - SFTP connection](./6-SFTPConnection.md)
 
 
