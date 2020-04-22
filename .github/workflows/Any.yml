@@ -25,12 +25,12 @@ on:
 
 jobs:
   update_home:
-
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
       matrix:
         python-version: [3.8]
+    steps:
     - name: Checkout Repo
       uses: actions/checkout@v2
       with:
@@ -45,6 +45,6 @@ jobs:
         git config --global user.name "GitHub-Actions"
         git add *
         git diff-index --quiet HEAD || git commit -m "[DOC] Updated Home from GitHub actions"
-        git push
+        git push origin ${GITHUB_REF##*/}
         cd ..
         rm -rf nautilus-sftp-gateway/
