@@ -1,0 +1,50 @@
+# GNU Lesser General Public License v3.0 only
+# Copyright (C) 2020 Artefact
+# licence-information@artefact.com
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+name: Any
+
+on:
+  push:
+    branches-ignore:
+    - master
+    - develop
+
+jobs:
+  update_home:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.8]
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+      with:
+        repository: artefactory/nautilus-sftp-gateway.git
+        path: nautilus-sftp-gateway/
+        persist-credentials: true
+    - name: Update Home
+      run : |
+        cd nautilus-sftp-gateway/
+        sed -r "s/\.\/docs\/(.*)\.md/\.\/\1/g" README.md > ./docs/*-Home.md
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub-Actions"
+        git add *
+        git diff-index --quiet HEAD || git commit -m "[DOC] Updated Home from GitHub actions"
+        git push
+        cd ..
+        rm -rf nautilus-sftp-gateway/

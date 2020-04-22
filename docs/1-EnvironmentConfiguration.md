@@ -1,5 +1,5 @@
 
-[Home](./#-Home.md)
+[Home](./*-Home.md)
 
 This step requires steps :
 - [0 - Installation](./0-Installation.md)
