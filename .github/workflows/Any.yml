@@ -41,7 +41,7 @@ jobs:
     - name: Update Home
       run : |
         cd nautilus-sftp-gateway/
-        sed -r "s/\.\/docs\/(.*)\.md/\.\/\1/g" README.md > ./docs/*-Home.md
+        sed -r "s/\.\/docs\/(.*)/\.\/\1/g" README.md > ./docs/*-Home.md
         git config --global user.email "actions@github.com"
         git config --global user.name "GitHub-Actions"
         git add *
