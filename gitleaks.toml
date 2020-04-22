@@ -68,11 +68,11 @@ title = "gitleaks config"
 
 [[rules]]
 	description = "Env Var"
-	regex = '''(?i)(api_key|apikey|secret|key|api|password|pw|host)=[0-9a-zA-Z-_{}]{4,120}'''
+	regex = '''(?i)(api_key|apikey|api|password|pw|host)=[0-9a-zA-Z-_{}]{4,120}'''
 
 [[rules]]
 	description = "Generic Credential"
-	regex = '''(?i)(dbpasswd|dbuser|dbname|dbhost|api_key|apikey|api|password|hostname|pw|auth)(.{0,20})?['|"][0-9a-zA-Z-_!{}/=]{4,120}['|"]'''
+	regex = '''(?i)(dbpasswd|dbuser|dbname|dbhost|api_key|apikey|api|password|hostname|pw)(.{0,20})?['|"][0-9a-zA-Z-_!{}/=]{4,120}['|"]'''
 	tags = ["key", "API", "generic"]
 	[[rules.whitelist]]
 	    file = '''^gitleaks.toml$'''
