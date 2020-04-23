@@ -20,8 +20,10 @@
 import os
 import glob
 from concurrent.futures import ThreadPoolExecutor
-from commands.upload_file import Uploader
 from loguru import logger
+from connectors.gcs import GCSUploader
+from connectors.s3 import S3Uploader
+from connectors import upload_file
 import config
 
 
@@ -29,10 +31,13 @@ def move_existing():
     """Summary
     """
     logger.info("Moving existing files")
-    uploader = Uploader()
+    uploaders = [S3Uploader(), GCSUploader()]
     with ThreadPoolExecutor(max_workers=None) as executor:
         for user, _ in config.PROJECT_CONFIG["USERS"].items():
             existing_files = glob.glob(os.path.join(config.APP_LANDING_DIR, user, 'ingest', "*"))
             for file in existing_files:
-                executor.submit(uploader.upload_file, file)
-                os.remove(file)
+                executor.submit(
+                    upload_file,
+                    uploaders,
+                    file
+                )

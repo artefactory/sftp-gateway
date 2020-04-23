@@ -33,3 +33,18 @@ def is_ignored(path: str):
     """
     filters = config.APP_LANDING_TEMP_PATTERNS.split(",")
     return any([fnmatch.fnmatch(path, _filter) for _filter in filters])
+
+
+def get_user_from_path(file_path: str) -> str:
+    """Summary
+    Args:
+        file_path (str): Description
+    Returns:
+        str: Description
+    """
+    username = file_path[len(config.APP_LANDING_DIR):].strip('/').split('/')[0]
+    return [
+        (user, userdata)
+        for user, userdata in config.PROJECT_CONFIG["USERS"].items()
+        if user == username
+    ][0]

@@ -23,7 +23,7 @@ Attributes:
 import os
 import csv
 from datetime import date
-import click
+import json
 import boto3
 from botocore.client import BaseClient
 import yaml
@@ -33,30 +33,21 @@ from src.opt.app import command
 CONFIG = yaml.load(open(f"config/{os.environ['ENV']}.yaml", "r"), Loader=yaml.FullLoader)
 
 
-@click.group()
-def cli():
-    """Summary
-    """
-
-
-@cli.command()
 def create_aws_access_keys():
     """Summary
     """
     account_ids = []
     iam_clients = {}
-    policy_document = (
-        '{'
-        f'    "Version": {date.today().strftime("%Y-%m-%d")}',
-        '    "Statement": ['
-        '        {'
-        '            "Effect": "Allow",'
-        '            "Action": ["s3:*"],'
-        '            "Resource": "*"'
-        '        }'
-        '    ]'
-        '}'
-    )
+    policy_document = {
+        "Version": date.today().strftime("%Y-%m-%d"),
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": ["s3:*"],
+                "Resource": "*"
+            }
+        ]
+    }
     for user, userdata in CONFIG["USERS"].items():
         if "AWS_ACCOUNTS" in userdata:
             for account_id, _ in userdata["AWS_ACCOUNTS"].items():
@@ -84,7 +75,7 @@ def create_aws_access_keys():
             iam_clients[account_id].create_policy(
                 Path=f"arn:aws:iam::{account_id}:policy/sftp-users",
                 PolicyName="sftp-users",
-                PolicyDocument=policy_document,
+                PolicyDocument=json.dumps(policy_document, indent=4),
                 Description="Policy for Nautilus SFTP user"
             )
         for user, userdata in CONFIG["USERS"].items():
@@ -145,4 +136,4 @@ def set_user(iam: BaseClient, account_id: str, user: str):
 
 
 if __name__ == '__main__':
-    cli()
+    create_aws_access_keys()

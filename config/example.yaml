@@ -28,6 +28,7 @@ APP:
   NAME: nautilus-sftp-example
   SERVICE_PORT: 22
   HOST_PORT: 3000
+  ALLOW_PASSWORD: false
   SERVICE_INTERNAL: false
   PERSIST_FILES: false
 USERS:
