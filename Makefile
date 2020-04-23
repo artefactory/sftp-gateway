@@ -121,7 +121,7 @@ create_services_credentials: create_gcp_service_account_keys create_azure_servic
 
 .PHONY: create_gcp_service_accounts
 create_gcp_service_account_keys: credentials_dir
-	python ./bin/gcp.py create-gcp-service-accounts
+	python ./bin/create_gcp_service_accounts_and_keys.py
 
 .PHONY: create_azure_service_principals
 create_azure_service_principals:
@@ -129,7 +129,7 @@ create_azure_service_principals:
 
 .PHONY: create_aws_access_keys
 create_aws_service_accounts:
-	python ./bin/aws.py create-aws-access-keys
+	python ./bin/create_aws_users_and_access_keys.py
 
 .PHONY: create_alicloud_access_keys
     #TODO

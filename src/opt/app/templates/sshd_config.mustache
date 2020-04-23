@@ -1,7 +1,7 @@
 #IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to no here!
-PasswordAuthentication yes
+PasswordAuthentication {{allow_password}}
 KbdInteractiveAuthentication yes
 PermitEmptyPasswords no
 
@@ -39,7 +39,7 @@ PermitTunnel no
 Port {{ssh_port}}
 ChrootDirectory %h
 
-AuthenticationMethods publickey password keyboard-interactive
+AuthenticationMethods publickey {{auth_password}}
 
 ForceCommand internal-sftp -p open,close,read,write,lstat,fstat,setstat,opendir,readdir,mkdir,rmdir,realpath,stat,rename,posix-rename
 

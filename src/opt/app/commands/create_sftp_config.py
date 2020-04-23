@@ -29,7 +29,7 @@ def create_sftp_config():
     logger.info("Configuring SFTP Config")
 
     renderer = pystache.Renderer()
-
+    allow_password = config.PROJECT_CONFIG["APP"]["ALLOW_PASSWORD"]
     context = {
         "authorized_keys_files": " ".join(
             [
@@ -38,7 +38,9 @@ def create_sftp_config():
             ]
         ),
         "users": " ".join([user for user, userdata in config.PROJECT_CONFIG["USERS"].items()]),
-        "ssh_port": config.PROJECT_CONFIG["APP"]["SERVICE_PORT"]
+        "ssh_port": config.PROJECT_CONFIG["APP"]["SERVICE_PORT"],
+        "allow_password": "yes" if allow_password else "no",
+        "auth_password": "password keyboard-interactive" if allow_password else ""
     }
 
     render_config = renderer.render_path(config.get_template("sshd_config"), context)

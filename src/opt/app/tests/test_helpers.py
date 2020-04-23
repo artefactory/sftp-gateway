@@ -1,5 +1,3 @@
-"""Summary
-"""
 # GNU Lesser General Public License v3.0 only
 # Copyright (C) 2020 Artefact
 # licence-information@artefact.com
@@ -17,6 +15,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+"""Summary
+"""
 
 
 def test_dummy():

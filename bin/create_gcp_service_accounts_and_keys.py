@@ -23,7 +23,6 @@ Attributes:
 import os
 from base64 import b64decode
 from typing import Dict
-import click
 from googleapiclient import discovery, errors
 import yaml
 
@@ -31,13 +30,6 @@ import yaml
 CONFIG = yaml.load(open(f"config/{os.environ['ENV']}.yaml", "r"), Loader=yaml.FullLoader)
 
 
-@click.group()
-def cli():
-    """Summary
-    """
-
-
-@cli.command()
 def create_gcp_service_accounts():
     """Summary
     """
@@ -210,4 +202,4 @@ def create_service_account_key(
 
 
 if __name__ == '__main__':
-    cli()
+    create_gcp_service_accounts()

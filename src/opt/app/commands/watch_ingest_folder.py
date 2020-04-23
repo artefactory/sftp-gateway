@@ -21,9 +21,11 @@ from typing import List
 
 import os
 from concurrent.futures import ThreadPoolExecutor
-from commands.upload_file import Uploader
 from inotify_simple import INotify, flags, Event
 from loguru import logger
+from connectors.s3 import S3Uploader
+from connectors.gcs import GCSUploader
+from connectors import upload_file
 
 import config
 
@@ -48,7 +50,7 @@ class FileWatcher:
         self.directories = {}
         self.watch_descriptors = {}
         self.users = {}
-        self.uploader = Uploader()
+        self.uploaders = [GCSUploader(), S3Uploader()]
         for user, _ in config.PROJECT_CONFIG["USERS"].items():
             watch_descriptor = self.inotify.add_watch(
                 os.path.join(config.APP_LANDING_DIR, user, 'ingest'),
@@ -68,7 +70,8 @@ class FileWatcher:
             with ThreadPoolExecutor(max_workers=None) as executor:
                 for event in all_events:
                     executor.submit(
-                        self.uploader.upload_file,
+                        upload_file,
+                        self.uploaders,
                         os.path.join(self.directories[event.wd], event.name)
                     )
             for user, _ in config.PROJECT_CONFIG["USERS"].items():
