@@ -26,7 +26,8 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 data:
   {{ .Values.APP.NAME }}: |
-  {{ $.Files.Get (printf "values/%s.yaml" .Values.ENV) | indent 4 }}
+{{ $.Files.Get (printf "values/%s.yaml" .Values.ENV) | indent 4 }}
+
 ---
 apiVersion: v1
 kind: ConfigMap

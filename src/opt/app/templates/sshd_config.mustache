@@ -41,9 +41,9 @@ ChrootDirectory %h
 
 AuthenticationMethods publickey {{auth_password}}
 
-ForceCommand internal-sftp -p open,close,read,write,lstat,fstat,setstat,opendir,readdir,mkdir,rmdir,realpath,stat,rename,posix-rename
+ForceCommand internal-sftp
 
 # override default of no subsystems
-Subsystem sftp internal-sftp -p open,close,read,write,lstat,fstat,setstat,opendir,readdir,mkdir,rmdir,realpath,stat,rename,posix-rename
+Subsystem sftp internal-sftp
 
 AllowUsers {{users}}

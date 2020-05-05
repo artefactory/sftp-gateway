@@ -25,6 +25,7 @@ metadata:
     release: {{ .Release.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
+  serviceName: {{ .Values.APP.NAME }}-service
   selector:
     matchLabels:
       app: {{ .Values.APP.NAME }}
@@ -39,7 +40,6 @@ spec:
     spec:
       volumes:
       - name: {{ .Values.APP.NAME }}-secrets
-        namespace: sftp-gateway
         secret:
           secretName: {{ .Values.APP.NAME }}-secrets
           items:
@@ -50,13 +50,11 @@ spec:
       - name: {{ .Values.APP.NAME }}-config
         configMap:
           name: {{ .Values.APP.NAME }}-config
-          namespace: sftp-gateway
           items:
           - key: {{ .Values.APP.NAME }}
-            path: {{ .Values.APP.NAME }}
+            path: {{ .Values.APP.NAME }}.yaml
       containers:
       - name: {{ .Values.APP.NAME }}
-        namespace: sftp-gateway
         image: {{ .Values.APP.DOCKER_URL }}
         imagePullPolicy: Always
         command: ["python3", "/opt/app/bin/launch.py"]
@@ -67,15 +65,12 @@ spec:
             name: {{ .Values.APP.NAME }}-environment-config
         volumeMounts:
         - name: {{ .Values.APP.NAME }}-secrets
-          namespace: sftp-gateway
           mountPath: /var/run/secrets/{{ .Values.APP.NAME }}
           readOnly: true
         - name: {{ .Values.APP.NAME }}-config
-          namespace: sftp-gateway
           mountPath: /var/run/config/
           readOnly: true
         - name: landing
-          namespace: sftp-gateway
           mountPath: /var/landing/
   volumeClaimTemplates:
   - metadata:

@@ -42,7 +42,7 @@ def upload_file(uploaders: List, file_path: str):
                 futures=futures
             )
         wait(futures)
-        if config.PROJECT_CONFIG["APP"]["PERSIST_FILES"]:
+        if not config.PROJECT_CONFIG["APP"]["PERSIST_FILES"]:
             os.remove(file_path)
         del futures
 

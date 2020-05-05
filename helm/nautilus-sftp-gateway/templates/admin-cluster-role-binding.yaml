@@ -28,9 +28,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
-  namespace: sftp-gateway
 subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: User
   name: {{ .Values.K8S.ADMINUSERACCOUNT }}
-  namespace: sftp-gateway
