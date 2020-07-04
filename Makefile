@@ -72,7 +72,7 @@ create_ssh_keys: credentials_dir create_user_keys
 
 .PHONY: create_user_keys
 create_user_keys:
-	MK_CREDENTIALS_USERS_DIR=${MK_CREDENTIALS_USERS_DIR} python bin/create_user_keys.py
+	MK_CREDENTIALS_USERS_DIR=${MK_CREDENTIALS_USERS_DIR} python3 bin/create_user_keys.py
 
 
 MK_APP_SFTP_HOSTKEY_ECDSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh-host-ecdsa-key
@@ -121,7 +121,7 @@ create_services_credentials: create_gcp_service_account_keys create_azure_servic
 
 .PHONY: create_gcp_service_accounts
 create_gcp_service_account_keys: credentials_dir
-	python ./bin/create_gcp_service_accounts_and_keys.py
+	python3 ./bin/create_gcp_service_accounts_and_keys.py
 
 .PHONY: create_azure_service_principals
 create_azure_service_principals:
@@ -129,7 +129,7 @@ create_azure_service_principals:
 
 .PHONY: create_aws_access_keys
 create_aws_service_accounts:
-	python ./bin/create_aws_users_and_access_keys.py
+	python3 ./bin/create_aws_users_and_access_keys.py
 
 .PHONY: create_alicloud_access_keys
     #TODO
