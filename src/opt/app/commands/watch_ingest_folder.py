@@ -74,25 +74,6 @@ class FileWatcher:
                         self.uploaders,
                         os.path.join(self.directories[event.wd], event.name)
                     )
-            for user, _ in config.PROJECT_CONFIG["USERS"].items():
-                self.delete_subdirectories_if_empty(
-                    os.path.join(config.APP_LANDING_DIR, user, 'ingest')
-                )
-
-    def delete_subdirectories_if_empty(self, dirname: str):
-        """Summary
-        Args:
-            dirname (str): Description
-        """
-        for root, dirs, _ in os.walk(dirname, topdown=False):
-            for name in dirs:
-                dir_path = os.path.join(root, name)
-                if not os.listdir(dir_path):  # An empty list is False
-                    if os.path.join(root, name) in self.watch_descriptors:
-                        self.inotify.rm_watch(self.watch_descriptors[os.path.join(root, name)])
-                        del self.directories[self.watch_descriptors[os.path.join(root, name)]]
-                        del self.watch_descriptors[os.path.join(root, name)]
-                        os.rmdir(os.path.join(root, name))
 
     def get_all_events(self, events: List[Event]) -> List[Event]:
         """Summary
