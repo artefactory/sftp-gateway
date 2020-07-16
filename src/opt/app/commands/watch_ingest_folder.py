@@ -21,8 +21,8 @@ from typing import List
 
 import os
 from concurrent.futures import ThreadPoolExecutor
-from inotify_simple import INotify, flags, Event
 from loguru import logger
+from inotify_simple import INotify, flags, Event
 from connectors.s3 import S3Uploader
 from connectors.gcs import GCSUploader
 from connectors import upload_file

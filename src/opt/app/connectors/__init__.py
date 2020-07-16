@@ -20,13 +20,21 @@
 from typing import Dict, List
 from concurrent.futures import ThreadPoolExecutor, wait
 import os
-from loguru import logger
 import time
+from loguru import logger
 import config
 import helpers
 
 
 def wait_for_file_readiness(file_path: str):
+    """Summary
+
+    Args:
+        file_path (str): Description
+
+    Returns:
+        bool: Description
+    """
     logger.debug(f"Trying to fetch file {file_path}...")
     size = 0
     while os.path.getsize(file_path) != size:
