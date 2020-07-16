@@ -31,7 +31,9 @@ def set_landing_permissions():
     for user, _ in config.PROJECT_CONFIG["USERS"].items():
         os.chmod(os.path.join(config.APP_LANDING_DIR, user), 0o755)
         os.chmod(os.path.join(config.APP_LANDING_DIR, user, "ingest"), 0o755)
-        shutil.chown(os.path.join(config.APP_LANDING_DIR, user, "ingest"), user, int(config.APP_SFTP_GUID))
+        shutil.chown(
+            os.path.join(config.APP_LANDING_DIR, user, "ingest"), user, int(config.APP_SFTP_GUID)
+        )
         for root, dirs, files in os.walk(f"{os.path.join(config.APP_LANDING_DIR, user)}"):
             for directory in dirs:
                 os.chmod(os.path.join(root, directory), 0o755)

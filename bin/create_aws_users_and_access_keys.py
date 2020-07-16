@@ -60,8 +60,8 @@ def create_aws_access_keys():
                 f"Please, setup your admin access keys for Account ID"
                 f"(no admin access keys are used online) : {account_id}"
             )
-            aws_access_key_id = input(f"AWS Access Key ID :")
-            aws_secret_access_key = input(f"AWS Secret Access Key :")
+            aws_access_key_id = input("AWS Access Key ID :")
+            aws_secret_access_key = input("AWS Secret Access Key :")
             command.run(
                 f"aws configure set aws_access_key_id "
                 f"{aws_access_key_id} --profile {account_id}"

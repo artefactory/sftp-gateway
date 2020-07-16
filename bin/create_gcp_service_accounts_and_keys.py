@@ -131,7 +131,7 @@ def add_service_account_policy(
     existing_policies = get_project_policies(project_id, resource_manager_service)
     new_policies = existing_policies
     new_policies["bindings"] += [{
-        "role": f"roles/storage.objectAdmin",
+        "role": "roles/storage.objectAdmin",
         "members": [
             f'serviceAccount:{service_account["email"]}'
         ]
