@@ -34,7 +34,7 @@ def create_users():
     """
     logger.info("Creating user")
 
-    for user, userdata in config.PROJECT_CONFIG["USERS"].items():
+    for user, _ in config.PROJECT_CONFIG["USERS"].items():
         if user in config.FORBIDDEN_USERNAMES:
             raise Exception(f"Username {user} value is invalid")
 

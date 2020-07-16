@@ -72,7 +72,7 @@ create_ssh_keys: credentials_dir create_user_keys
 
 .PHONY: create_user_keys
 create_user_keys:
-	MK_CREDENTIALS_USERS_DIR=${MK_CREDENTIALS_USERS_DIR} python bin/create_user_keys.py
+	MK_CREDENTIALS_USERS_DIR=${MK_CREDENTIALS_USERS_DIR} python3 bin/create_user_keys.py
 
 
 MK_APP_SFTP_HOSTKEY_ECDSA = ${MK_CREDENTIALS_INTERNAL_DIR}/ssh-host-ecdsa-key
@@ -121,7 +121,7 @@ create_services_credentials: create_gcp_service_account_keys create_azure_servic
 
 .PHONY: create_gcp_service_accounts
 create_gcp_service_account_keys: credentials_dir
-	python ./bin/create_gcp_service_accounts_and_keys.py
+	python3 ./bin/create_gcp_service_accounts_and_keys.py
 
 .PHONY: create_azure_service_principals
 create_azure_service_principals:
@@ -129,7 +129,7 @@ create_azure_service_principals:
 
 .PHONY: create_aws_access_keys
 create_aws_service_accounts:
-	python ./bin/create_aws_users_and_access_keys.py
+	python3 ./bin/create_aws_users_and_access_keys.py
 
 .PHONY: create_alicloud_access_keys
     #TODO
@@ -153,24 +153,19 @@ $(MK_HELM_CONFIG): $(MK_CONFIG) credentials helm/nautilus-sftp-gateway/values
 	rm -rf $(MK_HELM_SECRETS)
 	mkdir -p $(MK_HELM_SECRETS)
 	cp -r $(MK_CREDENTIALS_DIR) $(MK_HELM_SECRETS)
-	cp config/${environment}.yaml > $(MK_HELM_CONFIG)
-
-.PHONY: helm_setup
-helm_setup:
-	kubectl apply -f helm/rbac-tiller.yaml
-	helm init --service-account tiller --upgrade
+	cp config/${environment}.yaml $(MK_HELM_CONFIG)
 
 .PHONY: helm_debug
-helm_debug: helm_setup helm_generate_values
-	helm install --dry-run --debug -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
+helm_debug: helm_generate_values
+	helm install --dry-run --debug ${APP_NAME} -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
 
 .PHONY: helm_install
-helm_install: setup_container_registry_access setup_kubernetes_access docker_publish helm_setup helm_generate_values
-	count=$$(helm ls -q ${APP_NAME} | grep -c "^${APP_NAME}$$"); \
+helm_install: setup_container_registry_access setup_kubernetes_access docker_publish helm_generate_values
+	count=$$(helm ls -q --all-namespaces --filter ${APP_NAME} | grep -c "^${APP_NAME}$$"); \
 	if [ $${count} -eq 1 ]; then \
 		command="upgrade ${APP_NAME} --recreate-pods"; \
 	else \
-		command="install --name ${APP_NAME}"; \
+		command="install ${APP_NAME}"; \
 	fi; \
 	helm $${command} -f helm/nautilus-sftp-gateway/values/${environment}.yaml ./helm/nautilus-sftp-gateway
 

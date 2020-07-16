@@ -20,9 +20,27 @@
 from typing import Dict, List
 from concurrent.futures import ThreadPoolExecutor, wait
 import os
+import time
 from loguru import logger
 import config
 import helpers
+
+
+def wait_for_file_readiness(file_path: str):
+    """Summary
+
+    Args:
+        file_path (str): Description
+
+    Returns:
+        bool: Description
+    """
+    logger.debug(f"Trying to fetch file {file_path}...")
+    size = 0
+    while os.path.getsize(file_path) != size:
+        size = os.path.getsize(file_path)
+        time.sleep(3)
+    return True
 
 
 def upload_file(uploaders: List, file_path: str):
@@ -32,6 +50,7 @@ def upload_file(uploaders: List, file_path: str):
         file_path (str): Description
     """
     user, userdata = helpers.get_user_from_path(file_path)
+    wait_for_file_readiness(file_path)
     with ThreadPoolExecutor(max_workers=None) as executor:
         futures = []
         for uploader in uploaders:
@@ -42,7 +61,7 @@ def upload_file(uploaders: List, file_path: str):
                 futures=futures
             )
         wait(futures)
-        if config.PROJECT_CONFIG["APP"]["PERSIST_FILES"]:
+        if not config.PROJECT_CONFIG["APP"]["PERSIST_FILES"]:
             os.remove(file_path)
         del futures
 

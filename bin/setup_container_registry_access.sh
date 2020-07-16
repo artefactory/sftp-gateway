@@ -36,7 +36,7 @@ Please setup your docker configuration by using one of the following tools
 
 	AWS :
 	https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth
-	aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin AWS_ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com
+	aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com
 
 	### TODO : Test this docker registry authentication method ###
 	Alicloud :
