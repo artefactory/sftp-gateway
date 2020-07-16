@@ -78,6 +78,7 @@ jobs:
       with:
         repository: artefactory/nautilus-sftp-gateway.wiki.git
         path: nautilus-sftp-gateway.wiki/
+        ref: master
         persist-credentials: true
     - name: Update Wiki
       run : |
