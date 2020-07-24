@@ -63,6 +63,7 @@ class FileWatcher:
             )
             self.users[watch_descriptor] = user
             self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
+            self.add_subfolder_watchers(watch_descriptor, user)
             logger.info("Watching ingestion folder")
         while True:
             events = self.inotify.read(read_delay=1000)
@@ -147,6 +148,17 @@ class FileWatcher:
                 ]
                 logger.info(f"Adding untracked event for file : {root}/{file}")
         return all_events
+
+    def add_subfolder_watchers(self, watch_descriptor: int, event_user: str):
+        for root, folders, files in os.walk(self.directories[watch_descriptor]):
+            for folder in folders:
+                watch_descriptor = self.inotify.add_watch(
+                    os.path.join(root, folder),
+                    self.watched_flags
+                )
+                self.directories[watch_descriptor] = os.path.join(root, folder)
+                self.users[watch_descriptor] = event_user
+                self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
 
 
 def watch_ingest_folder():
