@@ -12,7 +12,7 @@
 ![Nautilus SFTP Gateway architecture](./docs/Nautilus_SFTP_Gateway_architecture.png)
 
 
-This is a Docker image containing a SSH server and an INotify daemon allowing to create a SFTP gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS or other cloud storage services.
+A Docker image containing a SSH server and an INotify daemon allows to create a SFTP gateway server. Once deployed, you can connect to the SFTP server and read/write files that are immediately synchronised to GCS, S3, Azure Blob Storage (in development) and/or other cloud storage services.
 
 The repository contains the appropriate files to deploy the container to Kubernetes.
 
@@ -24,22 +24,21 @@ The repository contains the appropriate files to deploy the container to Kuberne
 
 ## Overview
 
-When you run a container based on this image, it creates a SFTP server that can only be accessed by specified users, and moves uploaded data to one or more specified buckets.
+When you run a container based on this image, it creates a SFTP server that can only be accessed by specific users, and moves to uploaded data to one or more specific buckets.
 
-The users and the buckets are provided at runtime via container Environment variables. When the container starts, it uses the Environment variables to generate the appropriate configuration files and start the services. The container does not persist any data.
+The users and the buckets are provided at runtime via container Environment variables. When the container starts, it uses the Environment variables to generate the appropriate configuration files and start the services. The container does not persist any data by default.
 
-The container does not contain any credentials, they must be provided at deployment time via a mounted secrets volume on Kubernetes, or a mounted volume for vanilla Docker. See below for more information.
+The docker image does not contain any credentials, they must be provided during the container deployment via a mounted secrets volume on Kubernetes, or a mounted volume for vanilla Docker. See below for more information.
 
 
 ## Quick setup
 
 - 1/ Setup your environment by running `export ENV=dev` (here `dev` for example). Also run the following command : `export PYTHONPATH=$PYTHONPATH:.`
-- 2/ Fill in your configuration by copying the `./config/example.yaml` into a new `./config/${ENV}.yaml` file and replace the values by the ones you need.
+- 2/ Fill in your configuration by copying the `./config/example.yaml` into a new `./config/${ENV}.yaml` file and replace the values by the ones you need for your project.
 - 3/ Add your secrets into the `./credentials/${ENV}` folder or let the project generate them for you.
 - 4/ Test your configuration by running the following command : `make docker_run`
-- 5/ Install Tiller on your Kubernetes cluster by running `make helm_setup`, if not already done.
-- 6/ Generate or copy an existing an IPv4 address that can be used by your Kubernetes cluster in your configuration file under APP -> SERVICE_IP.
-- 7/ Deploy the SFTP on Kubernetes my running the following command : `make helm_install`
+- 5/ Generate or copy an existing external IPv4 address that can be used by your Kubernetes cluster in your configuration file under APP -> SERVICE_IP.
+- 6/ Deploy the SFTP on Kubernetes by running the following command : `make helm_install`
 
 
 ## Table of contents
