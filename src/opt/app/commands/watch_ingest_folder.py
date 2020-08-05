@@ -95,13 +95,16 @@ class FileWatcher:
                 if flag in (flag.DELETE, flag.IGNORED):
                     deleted = True
             if is_dir and not deleted:
+                directory_name = os.path.join(
+                    self.directories.get(
+                        event.wd, os.path.join(config.APP_LANDING_DIR, event_user, "ingest")
+                    ), event.name
+                )
                 watch_descriptor = self.inotify.add_watch(
-                    os.path.join(config.APP_LANDING_DIR, event_user, "ingest", event.name),
+                    directory_name,
                     self.watched_flags
                 )
-                self.directories[watch_descriptor] = os.path.join(
-                    config.APP_LANDING_DIR, event_user, "ingest", event.name
-                )
+                self.directories[watch_descriptor] = directory_name
                 self.users[watch_descriptor] = event_user
                 self.watch_descriptors[self.directories[watch_descriptor]] = watch_descriptor
                 all_events = self.check_subfolders(watch_descriptor, all_events, event_user)
