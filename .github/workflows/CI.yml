@@ -67,4 +67,4 @@ jobs:
         radon cc --average .
     - name: Get leaks from gitleaks
       run: |
-        docker run --rm --name gitleaks -v $(pwd):/code/ zricethezav/gitleaks --repo-path=/code/ --config=/code/gitleaks.toml
+        docker run --rm --name gitleaks -v $(pwd):/code/ zricethezav/gitleaks --path=/code/ --config-path=/code/gitleaks.toml
