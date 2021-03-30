@@ -1,5 +1,5 @@
 
-# nautilus-sftp-gateway
+# sftp-gateway
 
 ![](https://nautilus-badger.appspot.com/get_badge/4d29c65d5f4d21f543ea2389e29fc7bcb621e7ef649ce070e6a47c1b5fbb86e9)
 ![](https://nautilus-badger.appspot.com/get_badge/31b1704918e14bb03933a6068e18a8afc09d725ceefc0e78a06267c65ccd07c2)
