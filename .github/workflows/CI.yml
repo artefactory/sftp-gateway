@@ -54,13 +54,13 @@ jobs:
         pip install pytest-cov webtest
         pytest --cov=./src/opt/app
       env:
-        PYTHONPATH: /home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway/src/opt/app
+        PYTHONPATH: ./src/opt/app
     - name: Run pylint
       run: |
         pip install pylint
-        pylint $(pwd)/**/*.py --disable=no-member
+        pylint $(pwd)/**/*.py
       env:
-        PYTHONPATH: /home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway/:/home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway/src/opt/app
+        PYTHONPATH: .:./src/opt/app
     - name: Run radon cyclomatic complexity
       run: |
         pip install radon
