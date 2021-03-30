@@ -7,4 +7,4 @@ click == 7.0
 python-dotenv == 0.11.0
 pyyaml == 5.4
 boto3 == 1.12.41
-awscli == 1.18.41
+awscli == 1.19.38
