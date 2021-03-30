@@ -74,6 +74,8 @@ class BaseUploader:
         clients (dict): Description
     """
 
+    UPLOADER_CONFIG_KEY = None
+
     def __init__(self):
         """Summary
         """
