@@ -153,7 +153,12 @@ class FileWatcher:
         return all_events
 
     def add_subfolder_watchers(self, watch_descriptor: int, event_user: str):
-        for root, folders, files in os.walk(self.directories[watch_descriptor]):
+        """Summary
+        Args:
+            watch_descriptor (int): Description
+            event_user (str): Description
+        """
+        for root, folders, _ in os.walk(self.directories[watch_descriptor]):
             for folder in folders:
                 watch_descriptor = self.inotify.add_watch(
                     os.path.join(root, folder),

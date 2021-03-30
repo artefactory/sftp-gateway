@@ -60,7 +60,7 @@ jobs:
         pip install pylint
         pylint $(pwd)/**/*.py --disable=no-member
       env:
-        PYTHONPATH: /home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway
+        PYTHONPATH: /home/runner/work/nautilus-sftp-gateway/nautilus-sftp-gateway/src/opt/app
     - name: Run radon cyclomatic complexity
       run: |
         pip install radon
