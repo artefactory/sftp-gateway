@@ -30,7 +30,9 @@ import yaml
 from src.opt.app import command
 
 
-CONFIG = yaml.load(open(f"config/{os.environ['ENV']}.yaml", "r"), Loader=yaml.FullLoader)
+CONFIG = None
+with open(f"config/{os.environ['ENV']}.yaml", "r", encoding="utf8") as config_file:
+    CONFIG = yaml.load(config_file, Loader=yaml.FullLoader)
 
 
 def create_aws_access_keys():
@@ -121,7 +123,7 @@ def set_user(iam: BaseClient, account_id: str, user: str):
         key_directory = os.path.join(*key_path.split("/")[:-1])
         if not os.path.exists(key_directory):
             os.mkdir(key_directory)
-        with open(key_path, 'w') as file:
+        with open(key_path, 'w', encoding="utf8") as file:
             writer = csv.writer(file)
             for row in [
                     ["Access key ID", "Secret access key"],
