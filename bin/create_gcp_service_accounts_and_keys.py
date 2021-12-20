@@ -27,7 +27,9 @@ from googleapiclient import discovery, errors
 import yaml
 
 
-CONFIG = yaml.load(open(f"config/{os.environ['ENV']}.yaml", "r"), Loader=yaml.FullLoader)
+CONFIG = None
+with open(f"config/{os.environ['ENV']}.yaml", "r", encoding="utf8") as config_file:
+    CONFIG = yaml.load(config_file, Loader=yaml.FullLoader)
 
 
 def create_gcp_service_accounts():

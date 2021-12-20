@@ -25,21 +25,20 @@ from src.opt.app import command
 def main():
     """Summary
     """
-    for user, _ in yaml.load(
-            open(f"config/{os.environ['ENV']}.yaml", "r"),
-            Loader=yaml.FullLoader)["USERS"].items():
-        if not os.path.isdir(f"{os.environ['MK_CREDENTIALS_USERS_DIR']}/{user}"):
-            command.run(f"mkdir {os.environ['MK_CREDENTIALS_USERS_DIR']}/{user}")
-        if not os.path.isfile(f"{os.environ['MK_CREDENTIALS_USERS_DIR']}/{user}/rsa-key"):
-            command.run(
-                f'ssh-keygen -N "" -f '
-                f'{os.environ["MK_CREDENTIALS_USERS_DIR"]}/{user}/rsa-key'
-            )
-        if not os.path.isfile(f"{os.environ['MK_CREDENTIALS_USERS_DIR']}/{user}/password"):
-            command.run(
-                f'openssl rand -out {os.environ["MK_CREDENTIALS_USERS_DIR"]}'
-                f'/{user}/password -base64 32'
-            )
+    with open(f"config/{os.environ['ENV']}.yaml", "r", encoding="utf8") as config_file:
+        for user, _ in yaml.load(config_file, Loader=yaml.FullLoader)["USERS"].items():
+            if not os.path.isdir(f"{os.environ['MK_CREDENTIALS_USERS_DIR']}/{user}"):
+                command.run(f"mkdir {os.environ['MK_CREDENTIALS_USERS_DIR']}/{user}")
+            if not os.path.isfile(f"{os.environ['MK_CREDENTIALS_USERS_DIR']}/{user}/rsa-key"):
+                command.run(
+                    f'ssh-keygen -N "" -f '
+                    f'{os.environ["MK_CREDENTIALS_USERS_DIR"]}/{user}/rsa-key'
+                )
+            if not os.path.isfile(f"{os.environ['MK_CREDENTIALS_USERS_DIR']}/{user}/password"):
+                command.run(
+                    f'openssl rand -out {os.environ["MK_CREDENTIALS_USERS_DIR"]}'
+                    f'/{user}/password -base64 32'
+                )
 
 
 if __name__ == '__main__':
